@@ -1,0 +1,27 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+resource_local_to_scene = true
+code = "shader_type canvas_item;
+
+//void fragment(){
+//	COLOR = texture(TEXTURE, UV);
+//	float lumi = (COLOR.r +COLOR.g+COLOR.b) / 3.0;
+//	COLOR.rgb = vec3(lumi);
+//}
+
+uniform bool clicked=false;
+
+void fragment(){
+vec4 col = texture(TEXTURE,UV).rgba;
+if (col.r==63.0/255.0 && col.g==72.0/255.0 && col.b==204.0/255.0) {
+    col.a=0.0;
+}}
+//COLOR=col;
+//if (clicked){
+//	float lumi = (COLOR.r +COLOR.g+COLOR.b) / 3.0;
+//	COLOR.rgb = vec3(lumi);
+//	}
+//}
+
+"

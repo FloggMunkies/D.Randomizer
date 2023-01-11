@@ -1,0 +1,11 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://sprites/images/Super_Slam.bmp" type="Texture" id=1]
+[ext_resource path="res://Button.gd" type="Script" id=2]
+[ext_resource path="res://CheckButton_Style.tres" type="Theme" id=3]
+
+[node name="Super_Slam_Button" type="CheckButton"]
+hint_tooltip = "Super Simian Slam"
+theme = ExtResource( 3 )
+icon = ExtResource( 1 )
+script = ExtResource( 2 )

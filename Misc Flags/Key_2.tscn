@@ -1,0 +1,14 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://black_trans.tres" type="Material" id=1]
+[ext_resource path="res://sprites/images/Key_Icon.bmp" type="Texture" id=2]
+[ext_resource path="res://Button.gd" type="Script" id=3]
+[ext_resource path="res://CheckButton_Style.tres" type="Theme" id=4]
+
+[node name="Key_2_Button" type="CheckButton"]
+material = ExtResource( 1 )
+hint_tooltip = "Key 2"
+theme = ExtResource( 4 )
+text = "2"
+icon = ExtResource( 2 )
+script = ExtResource( 3 )

@@ -1,0 +1,55 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://black_trans.tres" type="Material" id=1]
+[ext_resource path="res://sprites/images/unchecked.bmp" type="Texture" id=2]
+[ext_resource path="res://Logic/Level_Check_Button.gd" type="Script" id=4]
+[ext_resource path="res://Logic/Check_Dropdown.tscn" type="PackedScene" id=5]
+
+[sub_resource type="Shader" id=1]
+resource_local_to_scene = true
+code = "shader_type canvas_item;
+
+//void fragment(){
+//	COLOR = texture(TEXTURE, UV);
+//	float lumi = (COLOR.r +COLOR.g+COLOR.b) / 3.0;
+//	COLOR.rgb = vec3(lumi);
+//}
+
+uniform bool clicked=false;
+
+void fragment(){
+vec4 col = texture(TEXTURE,UV).rgba;
+if (col.r==0.0/255.0 && col.g==0.0/255.0 && col.b==0.0/255.0) {
+    col.a=0.0;
+}
+COLOR=col;
+if (clicked){
+	float lumi = (COLOR.r +COLOR.g+COLOR.b) / 3.0;
+	COLOR.rgb = vec3(lumi);
+	}
+}
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+shader = SubResource( 1 )
+shader_param/clicked = false
+
+[node name="Level_Check_Button" type="TextureButton"]
+material = ExtResource( 1 )
+margin_left = 128.0
+margin_right = 196.0
+margin_bottom = 68.0
+rect_scale = Vector2( 0.5, 0.5 )
+toggle_mode = true
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+script = ExtResource( 4 )
+
+[node name="Dropdown" parent="." instance=ExtResource( 5 )]
+material = SubResource( 2 )
+margin_left = -256.0
+margin_right = -96.0
+
+[connection signal="gui_input" from="." to="." method="_on_Level_Check_Button_gui_input"]
+[connection signal="pressed" from="." to="." method="_on_TextureButton_pressed"]

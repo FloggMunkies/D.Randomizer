@@ -1,0 +1,44 @@
+[gd_scene format=2]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="GraphEdit" type="GraphEdit" parent="."]
+margin_right = 704.0
+margin_bottom = 320.0
+
+[node name="GraphNode" type="GraphNode" parent="GraphEdit"]
+margin_right = 72.0
+margin_bottom = 80.0
+mouse_filter = 1
+title = "111"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color( 1, 1, 1, 1 )
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color( 1, 1, 1, 1 )
+
+[node name="Control" type="Control" parent="GraphEdit/GraphNode"]
+margin_left = 16.0
+margin_top = 24.0
+margin_right = 56.0
+margin_bottom = 24.0
+
+[node name="GraphNode2" type="GraphNode" parent="GraphEdit"]
+margin_left = 224.0
+margin_right = 296.0
+margin_bottom = 80.0
+mouse_filter = 1
+title = "222"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color( 1, 1, 1, 1 )
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color( 1, 1, 1, 1 )
+
+[node name="Control" type="Control" parent="GraphEdit/GraphNode2"]
+margin_left = 16.0
+margin_top = 24.0
+margin_right = 56.0
+margin_bottom = 24.0

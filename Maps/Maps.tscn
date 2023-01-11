@@ -1,0 +1,6596 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://Maps/New_Map_Button.tscn" type="PackedScene" id=1]
+[ext_resource path="res://sprites/DK Isles.bmp" type="Texture" id=2]
+[ext_resource path="res://Maps/Maps.gd" type="Script" id=3]
+[ext_resource path="res://sprites/images/indicator.png" type="Texture" id=4]
+[ext_resource path="res://sprites/Jungle Japes.bmp" type="Texture" id=5]
+[ext_resource path="res://Maps/Map_Shop_Button.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Maps/Highlight.gdshader" type="Shader" id=7]
+[ext_resource path="res://sprites/Angry Aztec.bmp" type="Texture" id=8]
+[ext_resource path="res://sprites/Frantic Factory.bmp" type="Texture" id=9]
+[ext_resource path="res://sprites/Gloomy Galleon.bmp" type="Texture" id=10]
+[ext_resource path="res://sprites/Fungi Forest.bmp" type="Texture" id=11]
+[ext_resource path="res://sprites/Crystal Caves.bmp" type="Texture" id=12]
+[ext_resource path="res://sprites/Creepy Castle.bmp" type="Texture" id=13]
+
+[sub_resource type="Shader" id=1]
+resource_local_to_scene = true
+code = "shader_type canvas_item;
+
+uniform vec4 color : hint_color = vec4(1.0);
+uniform float width : hint_range(0, 10) = 1.0;
+uniform int pattern : hint_range(0, 2) = 0; // diamond, circle, square
+uniform bool inside = false;
+uniform bool add_margins = true; // only useful when inside is false
+
+void vertex() {
+	if (add_margins) {
+		VERTEX += (UV * 2.0 - 1.0) * width;
+	}
+}
+
+bool hasContraryNeighbour(vec2 uv, vec2 texture_pixel_size, sampler2D texture) {
+	for (float i = -ceil(width); i <= ceil(width); i++) {
+		float x = abs(i) > width ? width * sign(i) : i;
+		float offset;
+		
+		if (pattern == 0) {
+			offset = width - abs(x);
+		} else if (pattern == 1) {
+			offset = floor(sqrt(pow(width + 0.5, 2) - x * x));
+		} else if (pattern == 2) {
+			offset = width;
+		}
+		
+		for (float j = -ceil(offset); j <= ceil(offset); j++) {
+			float y = abs(j) > offset ? offset * sign(j) : j;
+			vec2 xy = uv + texture_pixel_size * vec2(x, y);
+			
+			if ((xy != clamp(xy, vec2(0.0), vec2(1.0)) || texture(texture, xy).a == 0.0) == inside) {
+				return true;
+			}
+		}
+	}
+	
+	return false;
+}
+
+void fragment() {
+	vec2 uv = UV;
+	
+	if (add_margins) {
+		vec2 texture_pixel_size = vec2(1.0) / (vec2(1.0) / TEXTURE_PIXEL_SIZE + vec2(width * 2.0));
+		
+		uv = (uv - texture_pixel_size * width) * TEXTURE_PIXEL_SIZE / texture_pixel_size;
+		
+		if (uv != clamp(uv, vec2(0.0), vec2(1.0))) {
+			COLOR.a = 0.0;
+		} else {
+			COLOR = texture(TEXTURE, uv);
+		}
+	} else {
+		COLOR = texture(TEXTURE, uv);
+	}
+	
+	if ((COLOR.a > 0.0) == inside && hasContraryNeighbour(uv, TEXTURE_PIXEL_SIZE, TEXTURE)) {
+		COLOR.rgb = inside ? mix(COLOR.rgb, color.rgb, color.a) : color.rgb;
+		COLOR.a += (1.0 - COLOR.a) * color.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+shader = SubResource( 1 )
+shader_param/color = Color( 1, 1, 0, 0 )
+shader_param/width = 3.0
+shader_param/pattern = 0
+shader_param/inside = false
+shader_param/add_margins = true
+
+[sub_resource type="Shader" id=3]
+resource_local_to_scene = true
+code = "shader_type canvas_item;
+
+uniform vec4 color : hint_color = vec4(1.0);
+uniform float width : hint_range(0, 10) = 1.0;
+uniform int pattern : hint_range(0, 2) = 0; // diamond, circle, square
+uniform bool inside = false;
+uniform bool add_margins = true; // only useful when inside is false
+
+void vertex() {
+	if (add_margins) {
+		VERTEX += (UV * 2.0 - 1.0) * width;
+	}
+}
+
+bool hasContraryNeighbour(vec2 uv, vec2 texture_pixel_size, sampler2D texture) {
+	for (float i = -ceil(width); i <= ceil(width); i++) {
+		float x = abs(i) > width ? width * sign(i) : i;
+		float offset;
+		
+		if (pattern == 0) {
+			offset = width - abs(x);
+		} else if (pattern == 1) {
+			offset = floor(sqrt(pow(width + 0.5, 2) - x * x));
+		} else if (pattern == 2) {
+			offset = width;
+		}
+		
+		for (float j = -ceil(offset); j <= ceil(offset); j++) {
+			float y = abs(j) > offset ? offset * sign(j) : j;
+			vec2 xy = uv + texture_pixel_size * vec2(x, y);
+			
+			if ((xy != clamp(xy, vec2(0.0), vec2(1.0)) || texture(texture, xy).a == 0.0) == inside) {
+				return true;
+			}
+		}
+	}
+	
+	return false;
+}
+
+void fragment() {
+	vec2 uv = UV;
+	
+	if (add_margins) {
+		vec2 texture_pixel_size = vec2(1.0) / (vec2(1.0) / TEXTURE_PIXEL_SIZE + vec2(width * 2.0));
+		
+		uv = (uv - texture_pixel_size * width) * TEXTURE_PIXEL_SIZE / texture_pixel_size;
+		
+		if (uv != clamp(uv, vec2(0.0), vec2(1.0))) {
+			COLOR.a = 0.0;
+		} else {
+			COLOR = texture(TEXTURE, uv);
+		}
+	} else {
+		COLOR = texture(TEXTURE, uv);
+	}
+	
+	if ((COLOR.a > 0.0) == inside && hasContraryNeighbour(uv, TEXTURE_PIXEL_SIZE, TEXTURE)) {
+		COLOR.rgb = inside ? mix(COLOR.rgb, color.rgb, color.a) : color.rgb;
+		COLOR.a += (1.0 - COLOR.a) * color.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id=4]
+resource_local_to_scene = true
+shader = SubResource( 3 )
+shader_param/color = Color( 1, 1, 0, 0 )
+shader_param/width = 3.0
+shader_param/pattern = 0
+shader_param/inside = false
+shader_param/add_margins = true
+
+[sub_resource type="ShaderMaterial" id=5]
+resource_local_to_scene = true
+shader = ExtResource( 7 )
+shader_param/color = Color( 1, 1, 0, 0 )
+shader_param/width = 3.0
+shader_param/pattern = 0
+shader_param/inside = false
+shader_param/add_margins = true
+
+[node name="Maps" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="TabContainer" type="TabContainer" parent="."]
+margin_right = 1280.0
+margin_bottom = 936.0
+
+[node name="DK Isles" type="Tabs" parent="TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="DK Isles Sprite" type="Sprite" parent="TabContainer/DK Isles"]
+modulate = Color( 0.831373, 0.831373, 0.831373, 1 )
+position = Vector2( 636, 480 )
+scale = Vector2( 2.83987, 2.85333 )
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 50, 25, 450, 300 )
+
+[node name="DK" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="DK1" parent="TabContainer/DK Isles/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 522.73
+margin_top = 289.25
+margin_right = 522.73
+margin_bottom = 289.25
+hint_tooltip = "Free GB"
+
+[node name="DK2" parent="TabContainer/DK Isles/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 1042.73
+margin_top = 401.25
+margin_right = 1042.73
+margin_bottom = 401.25
+hint_tooltip = "Snide Gun Switch
+
+Coconut,"
+
+[node name="DK3" parent="TabContainer/DK Isles/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 866.73
+margin_top = 305.25
+margin_right = 866.73
+margin_bottom = 305.25
+hint_tooltip = "Factory Lobby
+
+Gorilla Grab, Bongo Blast"
+
+[node name="DK4" parent="TabContainer/DK Isles/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 450.73
+margin_top = 553.25
+margin_right = 450.73
+margin_bottom = 553.25
+hint_tooltip = "Caves Lobby Ice Wall
+
+Barrel Throw, Chunky, Primate Punch, Strong Kong"
+
+[node name="Diddy" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Diddy1" parent="TabContainer/DK Isles/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 410.73
+margin_top = 425.25
+margin_right = 410.73
+margin_bottom = 425.25
+hint_tooltip = "Top of Isle
+
+Rocketbarrel, Lanky Music, Chunky, Barrel Throw"
+kong = "Diddy"
+
+[node name="Diddy2" parent="TabContainer/DK Isles/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 362.73
+margin_top = 425.25
+margin_right = 362.73
+margin_bottom = 425.25
+hint_tooltip = "Top of Isle Gun Switch
+
+Rocketbarrel, Peanuts, Lanky Music, Chunky, Barrel Throw"
+kong = "Diddy"
+
+[node name="Diddy3" parent="TabContainer/DK Isles/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1138.73
+margin_top = 401.25
+margin_right = 1138.73
+margin_bottom = 401.25
+hint_tooltip = "Snide Diddy Pad
+
+Simian Spring"
+kong = "Diddy"
+
+[node name="Diddy4" parent="TabContainer/DK Isles/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 402.73
+margin_top = 553.25
+margin_right = 402.73
+margin_bottom = 553.25
+hint_tooltip = "Caves Lobby Music Pad
+
+Rocketbarrel, Guitar"
+kong = "Diddy"
+
+[node name="Lanky" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Lanky1" parent="TabContainer/DK Isles/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 570.73
+margin_top = 289.25
+margin_right = 570.73
+margin_bottom = 289.25
+hint_tooltip = "Japes Lobby Boulder Music Pad
+
+Barrel Throw, Trombone"
+kong = "Lanky"
+
+[node name="Lanky2" parent="TabContainer/DK Isles/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 778.73
+margin_top = 113.25
+margin_right = 778.73
+margin_bottom = 113.25
+hint_tooltip = "K Lumsy Gun Switch
+
+Grape"
+kong = "Lanky"
+
+[node name="Lanky3" parent="TabContainer/DK Isles/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 826.73
+margin_top = 113.25
+margin_right = 826.73
+margin_bottom = 113.25
+hint_tooltip = "K Lumsy Barrel
+
+Orangestand Sprint"
+kong = "Lanky"
+
+[node name="Lanky4" parent="TabContainer/DK Isles/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 946.73
+margin_top = 113.25
+margin_right = 946.73
+margin_bottom = 113.25
+hint_tooltip = "Castle Lobby Boulder Pad
+
+Baboon Balloon, Barrel Throw"
+kong = "Lanky"
+
+[node name="Tiny" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Tiny1" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 746.73
+margin_top = 681.25
+margin_right = 746.73
+margin_bottom = 681.25
+hint_tooltip = "Fairy Island Gun Switch
+
+Feather"
+kong = "Tiny"
+
+[node name="Tiny2" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 434.73
+margin_top = 177.25
+margin_right = 434.73
+margin_bottom = 177.25
+hint_tooltip = "Aztec Lobby Gongs
+
+Chimpy Charge, Ponytail Twirl"
+kong = "Tiny"
+
+[node name="Tiny3" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1018.73
+margin_top = 665.25
+margin_right = 1018.73
+margin_bottom = 665.25
+hint_tooltip = "Galleon Lobby Super Switch
+
+Super Simian Slam, Mini Monkey, Dive, Chunky"
+kong = "Tiny"
+
+[node name="Tiny4" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1042.73
+margin_top = 473.25
+margin_right = 1042.73
+margin_bottom = 473.25
+hint_tooltip = "Monkeyport Music Pad
+
+Monkeyport, Saxaphone"
+kong = "Tiny"
+
+[node name="Tiny5" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 794.73
+margin_top = 681.25
+margin_right = 794.73
+margin_bottom = 681.25
+hint_tooltip = "Banana Fairy Reward
+
+20 Fairies"
+kong = "Tiny"
+
+[node name="Chunky" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Chunky1" parent="TabContainer/DK Isles/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 242.73
+margin_top = 513.25
+margin_right = 242.73
+margin_bottom = 513.25
+hint_tooltip = "Gun Switch
+
+Pineapple"
+kong = "Chunky"
+
+[node name="Chunky2" parent="TabContainer/DK Isles/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 570.73
+margin_top = 417.25
+margin_right = 570.73
+margin_bottom = 417.25
+hint_tooltip = "Boulder Music Pad
+
+Barrel Throw, Triangle"
+kong = "Chunky"
+
+[node name="Chunky3" parent="TabContainer/DK Isles/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 466.73
+margin_top = 849.25
+margin_right = 466.73
+margin_bottom = 849.25
+hint_tooltip = "Giant Rock
+
+Monkeyport, Saxaphone, Hunky Chunky"
+kong = "Chunky"
+
+[node name="Chunky4" parent="TabContainer/DK Isles/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 866.73
+margin_top = 457.25
+margin_right = 866.73
+margin_bottom = 457.25
+hint_tooltip = "Helm Lobby Pad
+
+Gorilla Gone"
+kong = "Chunky"
+
+[node name="Kasplat" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Kasplat1" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 818.73
+margin_top = 457.25
+margin_right = 818.73
+margin_bottom = 457.25
+hint_tooltip = "Helm Lobby Kasplat"
+kong = "Kasplat"
+
+[node name="Kasplat2" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 994.73
+margin_top = 113.25
+margin_right = 994.73
+margin_bottom = 113.25
+hint_tooltip = "Castle Lobby Kasplat
+
+Coconut"
+kong = "Kasplat"
+
+[node name="Kasplat3" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 498.73
+margin_top = 553.25
+margin_right = 498.73
+margin_bottom = 553.25
+hint_tooltip = "Caves Lobby Kasplat
+
+Primate Punch"
+kong = "Kasplat"
+
+[node name="Kasplat4" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 866.73
+margin_top = 377.25
+margin_right = 866.73
+margin_bottom = 377.25
+hint_tooltip = "Factory Lobby Kasplat
+
+Primate Punch"
+kong = "Kasplat"
+
+[node name="Kasplat5" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 970.73
+margin_top = 665.25
+margin_right = 970.73
+margin_bottom = 665.25
+hint_tooltip = "Galleon Lobby Kasplat"
+kong = "Kasplat"
+
+[node name="HUD" type="Control" parent="TabContainer/DK Isles"]
+
+[node name="ColorRect" type="ColorRect" parent="TabContainer/DK Isles/HUD"]
+margin_top = -8.0
+margin_right = 1276.0
+margin_bottom = 72.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="ColorRect2" type="ColorRect" parent="TabContainer/DK Isles/HUD"]
+margin_left = 4.0
+margin_right = 1268.0
+margin_bottom = 64.0
+color = Color( 0.0901961, 0.0901961, 0.0901961, 1 )
+
+[node name="Other" type="Control" parent="TabContainer/DK Isles"]
+
+[node name="BattlePad1" parent="TabContainer/DK Isles/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
+material = SubResource( 2 )
+margin_left = 1196.0
+margin_top = 400.0
+margin_right = 1196.0
+margin_bottom = 400.0
+hint_tooltip = "Snide Alcove Battlepad
+
+Chunky, Barrel Throw"
+kong = "Battlepad"
+
+[node name="BattlePad2" parent="TabContainer/DK Isles/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
+material = SubResource( 2 )
+margin_left = 244.0
+margin_top = 688.0
+margin_right = 244.0
+margin_bottom = 688.0
+hint_tooltip = "Fungi Lobby Battlepad
+
+All Kongs, All Guns, Gorilla Gone"
+kong = "Battlepad"
+
+[node name="Jetpack" parent="TabContainer/DK Isles/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
+material = SubResource( 2 )
+margin_left = 4.0
+margin_right = 4.0
+hint_tooltip = "Cranky Jetpac Game
+
+Requires Banana Medals"
+kong = "Jetpac"
+
+[node name="Aztec_Area" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 468.0
+margin_top = 104.0
+margin_right = 468.0
+margin_bottom = 104.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Aztec_Area"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/Aztec_Area"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Aztec Lobby"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Caves_Area" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 468.0
+margin_top = 624.0
+margin_right = 468.0
+margin_bottom = 624.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Caves_Area"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/Caves_Area"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Caves Lobby"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Fairy_Area" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 796.0
+margin_top = 864.0
+margin_right = 796.0
+margin_bottom = 864.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Fairy_Area"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/Fairy_Area"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Fairy Island"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Galleon_Area" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 1028.0
+margin_top = 744.0
+margin_right = 1028.0
+margin_bottom = 744.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Galleon_Area"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/Galleon_Area"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Galleon Lobby"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Croc_Area" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 1164.0
+margin_top = 328.0
+margin_right = 1164.0
+margin_bottom = 328.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Croc_Area"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/Croc_Area"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Croc Isle"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Helm_Area" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 868.0
+margin_top = 536.0
+margin_right = 876.0
+margin_bottom = 544.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Helm_Area"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/Helm_Area"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Helm Lobby"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Castle_Area" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 1116.0
+margin_top = 112.0
+margin_right = 1116.0
+margin_bottom = 112.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Castle_Area"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/Castle_Area"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Castle Lobby"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="KLumsy_Area" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 716.0
+margin_top = 112.0
+margin_right = 716.0
+margin_bottom = 112.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/KLumsy_Area"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/KLumsy_Area"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "K. Lumsy Isle"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Factory_Area" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 836.0
+margin_top = 328.0
+margin_right = 844.0
+margin_bottom = 336.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Factory_Area"]
+position = Vector2( 5.19753e-05, 0 )
+scale = Vector2( 0.941178, 1.64706 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/Factory_Area"]
+margin_left = -32.0
+margin_top = -32.0
+margin_right = 40.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Factory Lobby"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Cranky" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 420.0
+margin_top = 32.0
+margin_right = 440.0
+margin_bottom = 52.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD_Cranky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD_Cranky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Cranky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Cranky" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 116.0
+margin_right = 116.0
+
+[node name="DK6" parent="TabContainer/DK Isles/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+
+[node name="Diddy6" parent="TabContainer/DK Isles/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/DK Isles/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/DK Isles/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/DK Isles/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Chunky"
+
+[node name="Cranky" parent="TabContainer/DK Isles/Cranky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 536.0
+margin_top = 448.0
+margin_right = 536.0
+margin_bottom = 448.0
+hint_tooltip = "Caves Near Rambi"
+shop = "Cranky"
+
+[node name="Snide" type="Control" parent="TabContainer/DK Isles"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -4.0
+margin_top = -8.0
+margin_right = -1244.0
+margin_bottom = -876.0
+
+[node name="Snide" parent="TabContainer/DK Isles/Snide" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 1104.0
+margin_top = 408.0
+margin_right = 1104.0
+margin_bottom = 408.0
+hint_tooltip = "Near Anthill"
+shop = "Snide"
+
+[node name="Funky" type="Control" parent="TabContainer/DK Isles"]
+visible = false
+margin_left = 420.0
+margin_right = 420.0
+margin_bottom = 8.0
+
+[node name="DK6" parent="TabContainer/DK Isles/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+
+[node name="Diddy6" parent="TabContainer/DK Isles/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/DK Isles/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/DK Isles/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/DK Isles/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Chunky"
+
+[node name="Funky" parent="TabContainer/DK Isles/Funky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = -112.0
+margin_top = 368.0
+margin_right = -112.0
+margin_bottom = 368.0
+hint_tooltip = "Above Large Green Vine"
+shop = "Funky"
+
+[node name="Candy" type="Control" parent="TabContainer/DK Isles"]
+visible = false
+margin_left = 724.0
+margin_right = 724.0
+
+[node name="DK6" parent="TabContainer/DK Isles/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+
+[node name="Diddy6" parent="TabContainer/DK Isles/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/DK Isles/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/DK Isles/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/DK Isles/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Chunky"
+
+[node name="Candy" parent="TabContainer/DK Isles/Candy" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = -320.0
+margin_top = 336.0
+margin_right = -320.0
+margin_bottom = 336.0
+hint_tooltip = ""
+shop = "Candy"
+
+[node name="Jungle Japes" type="Tabs" parent="TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Jungle Japes Sprite" type="Sprite" parent="TabContainer/Jungle Japes"]
+modulate = Color( 0.831373, 0.831373, 0.831373, 1 )
+position = Vector2( 634.714, 480.879 )
+scale = Vector2( 2.94552, 2.87503 )
+texture = ExtResource( 5 )
+region_enabled = true
+region_rect = Rect2( 50, 40, 430, 290 )
+
+[node name="HUD2" type="Control" parent="TabContainer/Jungle Japes"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="TabContainer/Jungle Japes/HUD2"]
+margin_top = -8.0
+margin_right = 1276.0
+margin_bottom = 72.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="ColorRect2" type="ColorRect" parent="TabContainer/Jungle Japes/HUD2"]
+margin_left = 4.0
+margin_right = 1268.0
+margin_bottom = 64.0
+color = Color( 0.0901961, 0.0901961, 0.0901961, 1 )
+
+[node name="DK" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="DK1" parent="TabContainer/Jungle Japes/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 522.73
+margin_top = 161.25
+margin_right = 522.73
+margin_bottom = 161.25
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Random"
+
+[node name="DK2" parent="TabContainer/Jungle Japes/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 570.73
+margin_top = 161.25
+margin_right = 570.73
+margin_bottom = 161.25
+hint_tooltip = "Free Diddy
+
+(Random Kong Gun)"
+kong = "Random"
+
+[node name="DK3" parent="TabContainer/Jungle Japes/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 1066.73
+margin_top = 129.25
+margin_right = 1066.73
+margin_bottom = 129.25
+hint_tooltip = "Rambi Hut - Gate near Entrance
+
+Coconut"
+
+[node name="DK4" parent="TabContainer/Jungle Japes/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 178.73
+margin_top = 673.25
+margin_right = 178.73
+margin_bottom = 673.25
+hint_tooltip = "DK Pad
+
+Baboon Blast, Vine Swing"
+
+[node name="DK5" parent="TabContainer/Jungle Japes/DK" instance=ExtResource( 1 )]
+process_priority = 1
+material = SubResource( 4 )
+margin_left = 106.73
+margin_top = 33.25
+margin_right = 106.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+
+[node name="Diddy" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Diddy1" parent="TabContainer/Jungle Japes/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 386.73
+margin_top = 745.25
+margin_right = 386.73
+margin_bottom = 745.25
+hint_tooltip = "Entrance Alcove Gun Switch
+
+Peanut"
+kong = "Diddy"
+
+[node name="Diddy2" parent="TabContainer/Jungle Japes/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1066.73
+margin_top = 241.25
+margin_right = 1066.73
+margin_bottom = 241.25
+hint_tooltip = "Rambi Hut
+
+Coconut"
+kong = "Diddy"
+
+[node name="Diddy3" parent="TabContainer/Jungle Japes/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 442.73
+margin_top = 161.25
+margin_right = 442.73
+margin_bottom = 161.25
+hint_tooltip = "Anthill
+
+Peanut"
+kong = "Diddy"
+
+[node name="Diddy4" parent="TabContainer/Jungle Japes/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 394.73
+margin_top = 161.25
+margin_right = 394.73
+margin_bottom = 161.25
+hint_tooltip = "Mine Cart
+
+Peanut, Chimpy Charge"
+kong = "Diddy"
+
+[node name="Diddy5" parent="TabContainer/Jungle Japes/Diddy" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 154.73
+margin_top = 33.25
+margin_right = 154.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Diddy"
+
+[node name="Lanky" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Lanky1" parent="TabContainer/Jungle Japes/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 850.73
+margin_top = 129.25
+margin_right = 850.73
+margin_bottom = 129.25
+hint_tooltip = "Rambi Hut
+
+Coconut"
+kong = "Lanky"
+
+[node name="Lanky2" parent="TabContainer/Jungle Japes/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 890.73
+margin_top = 457.25
+margin_right = 890.73
+margin_bottom = 457.25
+hint_tooltip = "Steep Slope in Cave
+
+Orangstand"
+kong = "Lanky"
+
+[node name="Lanky3" parent="TabContainer/Jungle Japes/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 338.73
+margin_top = 673.25
+margin_right = 338.73
+margin_bottom = 673.25
+hint_tooltip = "Entrance Alcove Gun Switch
+
+Peanut, Grape"
+kong = "Lanky"
+
+[node name="Lanky4" parent="TabContainer/Jungle Japes/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 818.73
+margin_top = 361.25
+margin_right = 818.73
+margin_bottom = 361.25
+hint_tooltip = "Hill with Peanut Switch
+
+Peanut, Orangstand"
+kong = "Lanky"
+
+[node name="Lanky5" parent="TabContainer/Jungle Japes/Lanky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 202.73
+margin_top = 33.25
+margin_right = 202.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Lanky"
+
+[node name="Tiny" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Tiny1" parent="TabContainer/Jungle Japes/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 338.73
+margin_top = 745.25
+margin_right = 338.73
+margin_bottom = 745.25
+hint_tooltip = "Entrance Alcove Gun Switch
+
+Peanut, Feather"
+kong = "Tiny"
+
+[node name="Tiny2" parent="TabContainer/Jungle Japes/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 850.73
+margin_top = 241.25
+margin_right = 850.73
+margin_bottom = 241.25
+hint_tooltip = "Rambi Hut
+
+Coconut"
+kong = "Tiny"
+
+[node name="Tiny3" parent="TabContainer/Jungle Japes/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 58.7301
+margin_top = 201.25
+margin_right = 58.7301
+margin_bottom = 201.25
+hint_tooltip = "Tiny Locked Alcove - Stump
+
+Feather, Mini Monkey"
+kong = "Tiny"
+
+[node name="Tiny4" parent="TabContainer/Jungle Japes/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 106.73
+margin_top = 201.25
+margin_right = 106.73
+margin_bottom = 201.25
+hint_tooltip = "Tiny Locked Alcove - Shell
+
+Feather, Mini Monkey"
+kong = "Tiny"
+
+[node name="Tiny5" parent="TabContainer/Jungle Japes/Tiny" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 250.73
+margin_top = 33.25
+margin_right = 250.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Tiny"
+
+[node name="Chunky" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Chunky1" parent="TabContainer/Jungle Japes/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 226.73
+margin_top = 673.25
+margin_right = 226.73
+margin_bottom = 673.25
+hint_tooltip = "Boulder
+
+Barrel Throw"
+kong = "Chunky"
+
+[node name="Chunky2" parent="TabContainer/Jungle Japes/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 226.73
+margin_top = 745.25
+margin_right = 226.73
+margin_bottom = 745.25
+hint_tooltip = "Underground
+
+Barrel Throw, Vine Swing, Pineapple"
+kong = "Chunky"
+
+[node name="Chunky3" parent="TabContainer/Jungle Japes/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1138.73
+margin_top = 241.25
+margin_right = 1138.73
+margin_bottom = 241.25
+hint_tooltip = "Rambi Side Area
+
+Coconut, Barrel Throw"
+kong = "Chunky"
+
+[node name="Chunky4" parent="TabContainer/Jungle Japes/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 154.73
+margin_top = 201.25
+margin_right = 154.73
+margin_bottom = 201.25
+hint_tooltip = "Tiny Locked Area
+
+Feather, Hunky Chunky"
+kong = "Chunky"
+
+[node name="Chunky5" parent="TabContainer/Jungle Japes/Chunky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 298.73
+margin_top = 33.25
+margin_right = 298.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Chunky"
+
+[node name="Other" type="Control" parent="TabContainer/Jungle Japes"]
+
+[node name="BattlePad1" parent="TabContainer/Jungle Japes/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_top = 368.0
+margin_right = 356.0
+margin_bottom = 368.0
+hint_tooltip = "Battle Pad near Funky"
+kong = "Battlepad"
+
+[node name="Boss" parent="TabContainer/Jungle Japes/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
+material = SubResource( 2 )
+margin_left = 4.0
+margin_right = 4.0
+hint_tooltip = "Boss Battle"
+kong = "Boss"
+
+[node name="Kasplat" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Kasplat1" parent="TabContainer/Jungle Japes/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 74.7301
+margin_top = 433.25
+margin_right = 74.7301
+margin_bottom = 433.25
+hint_tooltip = "Caves near Tiny Locked Area"
+kong = "Kasplat"
+
+[node name="Kasplat2" parent="TabContainer/Jungle Japes/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1162.73
+margin_top = 385.25
+margin_right = 1162.73
+margin_bottom = 385.25
+hint_tooltip = "Caves near Minecart Exit Kasplat"
+kong = "Kasplat"
+
+[node name="Kasplat3" parent="TabContainer/Jungle Japes/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 890.73
+margin_top = 385.25
+margin_right = 890.73
+margin_bottom = 385.25
+hint_tooltip = "Near Steep Hill in Cave to Cranky"
+kong = "Kasplat"
+
+[node name="Kasplat4" parent="TabContainer/Jungle Japes/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 122.73
+margin_top = 433.25
+margin_right = 122.73
+margin_bottom = 433.25
+hint_tooltip = "Caves near Tiny Locked Area 2"
+kong = "Kasplat"
+
+[node name="Kasplat5" parent="TabContainer/Jungle Japes/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 178.73
+margin_top = 745.25
+margin_right = 178.73
+margin_bottom = 745.25
+hint_tooltip = "Underground
+
+Chunky, Barrel Throw, Vine Swing, Pineapple"
+kong = "Kasplat"
+
+[node name="Entrance_Alcove" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 564.0
+margin_top = 752.0
+margin_right = 564.0
+margin_bottom = 752.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Jungle Japes/Entrance_Alcove"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Jungle Japes/Entrance_Alcove"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Entrance Alcove"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Tiny_Area" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 140.0
+margin_top = 128.0
+margin_right = 140.0
+margin_bottom = 128.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Jungle Japes/Tiny_Area"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Jungle Japes/Tiny_Area"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Tiny Locked Area"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Caves_Cranky" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 1052.0
+margin_top = 360.0
+margin_right = 1052.0
+margin_bottom = 360.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Jungle Japes/Caves_Cranky"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Jungle Japes/Caves_Cranky"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Caves / Rambi / Cranky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Underground_Area" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 116.0
+margin_top = 672.0
+margin_right = 116.0
+margin_bottom = 672.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Jungle Japes/Underground_Area"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Jungle Japes/Underground_Area"]
+margin_left = -48.0
+margin_top = -32.0
+margin_right = 48.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Underground Entrance"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_BM" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 116.0
+margin_top = 32.0
+margin_right = 116.0
+margin_bottom = 40.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Jungle Japes/HUD_BM"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Jungle Japes/HUD_BM"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Banana Medals"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Cranky" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 420.0
+margin_top = 32.0
+margin_right = 420.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Jungle Japes/HUD_Cranky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Jungle Japes/HUD_Cranky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Cranky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Funky" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 724.0
+margin_top = 32.0
+margin_right = 724.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Jungle Japes/HUD_Funky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Jungle Japes/HUD_Funky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Funky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Candy" type="Control" parent="TabContainer/Jungle Japes"]
+visible = false
+margin_left = 1028.0
+margin_top = 32.0
+margin_right = 1028.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Jungle Japes/HUD_Candy"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Jungle Japes/HUD_Candy"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Candy"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Cranky" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 116.0
+margin_right = 116.0
+
+[node name="DK6" parent="TabContainer/Jungle Japes/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+
+[node name="Diddy6" parent="TabContainer/Jungle Japes/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Jungle Japes/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Jungle Japes/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Jungle Japes/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Chunky"
+
+[node name="Cranky" parent="TabContainer/Jungle Japes/Cranky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 864.0
+margin_top = 184.0
+margin_right = 864.0
+margin_bottom = 184.0
+hint_tooltip = "Caves Near Rambi"
+shop = "Cranky"
+
+[node name="Funky" type="Control" parent="TabContainer/Jungle Japes"]
+margin_left = 420.0
+margin_right = 420.0
+margin_bottom = 8.0
+
+[node name="DK6" parent="TabContainer/Jungle Japes/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+
+[node name="Diddy6" parent="TabContainer/Jungle Japes/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Jungle Japes/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Jungle Japes/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Jungle Japes/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Chunky"
+
+[node name="Funky" parent="TabContainer/Jungle Japes/Funky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = -112.0
+margin_top = 368.0
+margin_right = -112.0
+margin_bottom = 368.0
+hint_tooltip = "Above Large Green Vine"
+shop = "Funky"
+
+[node name="Candy" type="Control" parent="TabContainer/Jungle Japes"]
+visible = false
+margin_left = 724.0
+margin_right = 724.0
+
+[node name="DK6" parent="TabContainer/Jungle Japes/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+
+[node name="Diddy6" parent="TabContainer/Jungle Japes/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Jungle Japes/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Jungle Japes/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Jungle Japes/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = "Find Diddy
+
+(Random Kong)"
+kong = "Chunky"
+
+[node name="Candy" parent="TabContainer/Jungle Japes/Candy" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = -320.0
+margin_top = 336.0
+margin_right = -320.0
+margin_bottom = 336.0
+hint_tooltip = ""
+shop = "Candy"
+
+[node name="Snide" type="Control" parent="TabContainer/Jungle Japes"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Snide" parent="TabContainer/Jungle Japes/Snide" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 308.0
+margin_top = 272.0
+margin_right = 308.0
+margin_bottom = 272.0
+hint_tooltip = "Near Anthill"
+shop = "Snide"
+
+[node name="Angry Aztec" type="Tabs" parent="TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Angry Aztec Sprite" type="Sprite" parent="TabContainer/Angry Aztec"]
+modulate = Color( 0.831373, 0.831373, 0.831373, 1 )
+position = Vector2( 634.714, 488 )
+scale = Vector2( 2.94552, 3.78182 )
+texture = ExtResource( 8 )
+region_enabled = true
+region_rect = Rect2( 50, 40, 430, 220 )
+
+[node name="HUD2" type="Control" parent="TabContainer/Angry Aztec"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="TabContainer/Angry Aztec/HUD2"]
+margin_top = -8.0
+margin_right = 1276.0
+margin_bottom = 72.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="ColorRect2" type="ColorRect" parent="TabContainer/Angry Aztec/HUD2"]
+margin_left = 4.0
+margin_right = 1268.0
+margin_bottom = 64.0
+color = Color( 0.0901961, 0.0901961, 0.0901961, 1 )
+
+[node name="DK" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="DK1" parent="TabContainer/Angry Aztec/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 930.73
+margin_top = 649.25
+margin_right = 930.73
+margin_bottom = 649.25
+hint_tooltip = "Free the Llama
+
+Baboon Blast, (Diddy, Guitar, Vine Swing)"
+
+[node name="DK2" parent="TabContainer/Angry Aztec/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 754.73
+margin_top = 833.25
+margin_right = 754.73
+margin_bottom = 833.25
+hint_tooltip = "Free Lanky
+
+Kong + Gun + Music, Dive, (Diddy, Guitar, Vine Swing)"
+kong = "Random"
+
+[node name="DK3" parent="TabContainer/Angry Aztec/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 1026.73
+margin_top = 737.25
+margin_right = 1026.73
+margin_bottom = 737.25
+hint_tooltip = "Cave with Sand (Llama Temple Switch)
+
+Strong Kong, (Diddy, Guitar, Vine Swing)"
+
+[node name="DK4" parent="TabContainer/Angry Aztec/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 1186.73
+margin_top = 433.25
+margin_right = 1186.73
+margin_bottom = 433.25
+hint_tooltip = "Gun Temple
+
+Coconut, (Diddy, Guitar, Vine Swing)"
+
+[node name="DK5" parent="TabContainer/Angry Aztec/DK" instance=ExtResource( 1 )]
+process_priority = 1
+material = SubResource( 4 )
+margin_left = 106.73
+margin_top = 33.25
+margin_right = 106.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+
+[node name="Diddy" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Diddy1" parent="TabContainer/Angry Aztec/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 538.73
+margin_top = 297.25
+margin_right = 538.73
+margin_bottom = 297.25
+hint_tooltip = "Free Tiny, First Temple
+
+(Diddy, Peanut, Chimpy Charge)
+OR
+(Chunky, Pineapple, Primate Punch)
+AND
+Dive"
+kong = "Random"
+
+[node name="Diddy2" parent="TabContainer/Angry Aztec/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 834.73
+margin_top = 369.25
+margin_right = 834.73
+margin_bottom = 369.25
+hint_tooltip = "Gong Tower
+
+Guitar, Chimpy Charge, Vine Swing, Rocketbarrel"
+kong = "Diddy"
+
+[node name="Diddy3" parent="TabContainer/Angry Aztec/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1074.73
+margin_top = 737.25
+margin_right = 1074.73
+margin_bottom = 737.25
+hint_tooltip = "Gun Temple
+
+Guitar, Peanut, Vine Swing"
+kong = "Diddy"
+
+[node name="Diddy4" parent="TabContainer/Angry Aztec/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 986.73
+margin_top = 289.25
+margin_right = 986.73
+margin_bottom = 289.25
+hint_tooltip = "Buzzard Race
+
+Guitar, Vine Swing, Rocketbarrel"
+kong = "Diddy"
+
+[node name="Diddy5" parent="TabContainer/Angry Aztec/Diddy" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 154.73
+margin_top = 33.25
+margin_right = 154.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Diddy"
+
+[node name="Lanky" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Lanky1" parent="TabContainer/Angry Aztec/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 586.73
+margin_top = 297.25
+margin_right = 586.73
+margin_bottom = 297.25
+hint_tooltip = "First Temple Buzzard
+
+Grape, Dive"
+kong = "Lanky"
+
+[node name="Lanky2" parent="TabContainer/Angry Aztec/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 802.73
+margin_top = 833.25
+margin_right = 802.73
+margin_bottom = 833.25
+hint_tooltip = "Llama Temple Memory Puzzle
+
+Grape, (Diddy, Guitar, Vine Swing)"
+kong = "Lanky"
+
+[node name="Lanky3" parent="TabContainer/Angry Aztec/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 850.73
+margin_top = 833.25
+margin_right = 850.73
+margin_bottom = 833.25
+hint_tooltip = "Llama Temple Snakes
+
+Kong+Gun, Orangestand, (Diddy, Guitar, Vine Swing)"
+kong = "Lanky"
+
+[node name="Lanky4" parent="TabContainer/Angry Aztec/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1122.73
+margin_top = 737.25
+margin_right = 1122.73
+margin_bottom = 737.25
+hint_tooltip = "Gun Temple
+
+Grape, (Diddy, Guitar, Vine Swing)"
+kong = "Lanky"
+
+[node name="Lanky5" parent="TabContainer/Angry Aztec/Lanky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 202.73
+margin_top = 33.25
+margin_right = 202.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Lanky"
+
+[node name="Tiny" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Tiny1" parent="TabContainer/Angry Aztec/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 634.73
+margin_top = 297.25
+margin_right = 634.73
+margin_bottom = 297.25
+hint_tooltip = "First Temple Fight
+
+Kong+Gun, Mini Monkey, Dive"
+kong = "Tiny"
+
+[node name="Tiny2" parent="TabContainer/Angry Aztec/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 898.73
+margin_top = 833.25
+margin_right = 898.73
+margin_bottom = 833.25
+hint_tooltip = "Llama Temple Mini
+
+Kong+Gun, Mini Monkey, (Diddy, Guitar, Vine Swing)"
+kong = "Tiny"
+
+[node name="Tiny3" parent="TabContainer/Angry Aztec/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 882.73
+margin_top = 369.25
+margin_right = 882.73
+margin_bottom = 369.25
+hint_tooltip = "Gong Tower Bug Race
+
+Mini Monkey, Saxaphone, Chimpy Charge, (Diddy, Guitar, Vine Swing)"
+kong = "Tiny"
+
+[node name="Tiny4" parent="TabContainer/Angry Aztec/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1170.73
+margin_top = 737.25
+margin_right = 1170.73
+margin_bottom = 737.25
+hint_tooltip = "Gun Temple
+
+Feather, Mini Monkey,(Diddy, Guitar, Vine Swing)"
+kong = "Tiny"
+
+[node name="Tiny5" parent="TabContainer/Angry Aztec/Tiny" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 250.73
+margin_top = 33.25
+margin_right = 250.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Tiny"
+
+[node name="Chunky" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Chunky1" parent="TabContainer/Angry Aztec/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = -5.2699
+margin_top = 473.25
+margin_right = -5.2699
+margin_bottom = 473.25
+hint_tooltip = "Vase Puzzle
+
+Barrel Throw, Pineapple"
+kong = "Chunky"
+
+[node name="Chunky2" parent="TabContainer/Angry Aztec/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 682.73
+margin_top = 297.25
+margin_right = 682.73
+margin_bottom = 297.25
+hint_tooltip = "First Temple Puzzle
+
+Kong+Gun, Triangle"
+kong = "Chunky"
+
+[node name="Chunky3" parent="TabContainer/Angry Aztec/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 618.73
+margin_top = 529.25
+margin_right = 618.73
+margin_bottom = 529.25
+hint_tooltip = "Large Boulder in Caves
+
+Hunky Chunky, Barrel Throw, (Diddy, Guitar, Vine Swing)"
+kong = "Chunky"
+
+[node name="Chunky4" parent="TabContainer/Angry Aztec/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1218.73
+margin_top = 737.25
+margin_right = 1218.73
+margin_bottom = 737.25
+hint_tooltip = "Gun Temple
+
+Pineapple, (Diddy, Guitar, Vine Swing)"
+kong = "Chunky"
+
+[node name="Chunky5" parent="TabContainer/Angry Aztec/Chunky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 298.73
+margin_top = 33.25
+margin_right = 298.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Chunky"
+
+[node name="Other" type="Control" parent="TabContainer/Angry Aztec"]
+
+[node name="BattlePad1" parent="TabContainer/Angry Aztec/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
+material = SubResource( 2 )
+margin_left = 596.0
+margin_top = 368.0
+margin_right = 596.0
+margin_bottom = 368.0
+hint_tooltip = "First Temple Lanky Puzzle
+
+Lanky, Grape, Dive"
+kong = "Battlepad"
+
+[node name="Boss" parent="TabContainer/Angry Aztec/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
+material = SubResource( 2 )
+margin_left = 4.0
+margin_right = 4.0
+hint_tooltip = "Boss Battle"
+kong = "Boss"
+
+[node name="Kasplat" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Kasplat1" parent="TabContainer/Angry Aztec/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 226.73
+margin_top = 465.25
+margin_right = 226.73
+margin_bottom = 465.25
+hint_tooltip = "DK Entrance Alcove
+
+DK, Coconut"
+kong = "Kasplat"
+
+[node name="Kasplat2" parent="TabContainer/Angry Aztec/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 538.73
+margin_top = 369.25
+margin_right = 538.73
+margin_bottom = 369.25
+hint_tooltip = "Top of First Temple
+
+Diddy, Rocketbarrel"
+kong = "Kasplat"
+
+[node name="Kasplat3" parent="TabContainer/Angry Aztec/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 946.73
+margin_top = 833.25
+margin_right = 946.73
+margin_bottom = 833.25
+hint_tooltip = "Llama Temple Tiny Area
+
+Tiny, Mini Monkey, (Diddy, Guitar, Vine Swing)"
+kong = "Kasplat"
+
+[node name="Kasplat4" parent="TabContainer/Angry Aztec/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 666.73
+margin_top = 529.25
+margin_right = 666.73
+margin_bottom = 529.25
+hint_tooltip = "Caves near Cranky
+
+(Diddy, Guitar, Vine Swing)"
+kong = "Kasplat"
+
+[node name="Kasplat5" parent="TabContainer/Angry Aztec/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1218.73
+margin_top = 809.25
+margin_right = 1218.73
+margin_bottom = 809.25
+hint_tooltip = "Gun Temple Chunky Section
+
+Chunky, Pineapple, (Diddy, Guitar, Vine Swing)"
+kong = "Kasplat"
+
+[node name="Entrance" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 164.0
+margin_top = 360.0
+margin_right = 164.0
+margin_bottom = 360.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Angry Aztec/Entrance"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Angry Aztec/Entrance"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Entrance Tunnel"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="First Temple" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 604.0
+margin_top = 208.0
+margin_right = 604.0
+margin_bottom = 208.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Angry Aztec/First Temple"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Angry Aztec/First Temple"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "First Temple"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Cranky Caves" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 668.0
+margin_top = 632.0
+margin_right = 668.0
+margin_bottom = 632.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Angry Aztec/Cranky Caves"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Angry Aztec/Cranky Caves"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Cranky Caves"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Gong Tower" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 868.0
+margin_top = 272.0
+margin_right = 868.0
+margin_bottom = 272.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Angry Aztec/Gong Tower"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Angry Aztec/Gong Tower"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Gong Tower"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Gun Temple" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 1116.0
+margin_top = 656.0
+margin_right = 1116.0
+margin_bottom = 656.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Angry Aztec/Gun Temple"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Angry Aztec/Gun Temple"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Gun Temple"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Llama Temple" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 932.0
+margin_top = 744.0
+margin_right = 932.0
+margin_bottom = 744.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Angry Aztec/Llama Temple"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Angry Aztec/Llama Temple"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Llama Temple"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_BM" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 116.0
+margin_top = 32.0
+margin_right = 116.0
+margin_bottom = 40.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Angry Aztec/HUD_BM"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Angry Aztec/HUD_BM"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Banana Medals"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Cranky" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 420.0
+margin_top = 32.0
+margin_right = 420.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Angry Aztec/HUD_Cranky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Angry Aztec/HUD_Cranky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Cranky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Funky" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 724.0
+margin_top = 32.0
+margin_right = 724.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Angry Aztec/HUD_Funky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Angry Aztec/HUD_Funky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Funky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Candy" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 1028.0
+margin_top = 32.0
+margin_right = 1028.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Angry Aztec/HUD_Candy"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Angry Aztec/HUD_Candy"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Candy"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Cranky" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 116.0
+margin_right = 116.0
+
+[node name="DK6" parent="TabContainer/Angry Aztec/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Angry Aztec/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Angry Aztec/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Angry Aztec/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Angry Aztec/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Cranky" parent="TabContainer/Angry Aztec/Cranky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 632.0
+margin_top = 640.0
+margin_right = 632.0
+margin_bottom = 640.0
+hint_tooltip = ""
+shop = "Cranky"
+
+[node name="Funky" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 420.0
+margin_right = 420.0
+margin_bottom = 8.0
+
+[node name="DK6" parent="TabContainer/Angry Aztec/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Angry Aztec/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Angry Aztec/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Angry Aztec/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Angry Aztec/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Funky" parent="TabContainer/Angry Aztec/Funky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 728.0
+margin_top = 496.0
+margin_right = 728.0
+margin_bottom = 496.0
+hint_tooltip = ""
+shop = "Funky"
+
+[node name="Candy" type="Control" parent="TabContainer/Angry Aztec"]
+margin_left = 724.0
+margin_right = 724.0
+
+[node name="DK6" parent="TabContainer/Angry Aztec/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Angry Aztec/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Angry Aztec/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Angry Aztec/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Angry Aztec/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Candy" parent="TabContainer/Angry Aztec/Candy" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = -320.0
+margin_top = 336.0
+margin_right = -320.0
+margin_bottom = 336.0
+hint_tooltip = ""
+shop = "Candy"
+
+[node name="Snide" type="Control" parent="TabContainer/Angry Aztec"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Snide" parent="TabContainer/Angry Aztec/Snide" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 948.0
+margin_top = 288.0
+margin_right = 948.0
+margin_bottom = 288.0
+hint_tooltip = "Near Anthill"
+shop = "Snide"
+
+[node name="Frantic Factory" type="Tabs" parent="TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Frantic Factory Sprite" type="Sprite" parent="TabContainer/Frantic Factory"]
+modulate = Color( 0.831373, 0.831373, 0.831373, 1 )
+position = Vector2( 636, 504.364 )
+scale = Vector2( 2.78261, 3.45891 )
+texture = ExtResource( 9 )
+region_enabled = true
+region_rect = Rect2( 50, 40, 460, 240 )
+
+[node name="HUD2" type="Control" parent="TabContainer/Frantic Factory"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="TabContainer/Frantic Factory/HUD2"]
+margin_top = -8.0
+margin_right = 1276.0
+margin_bottom = 72.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="ColorRect2" type="ColorRect" parent="TabContainer/Frantic Factory/HUD2"]
+margin_left = 4.0
+margin_right = 1268.0
+margin_bottom = 64.0
+color = Color( 0.0901961, 0.0901961, 0.0901961, 1 )
+
+[node name="DK" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="DK1" parent="TabContainer/Frantic Factory/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 298.73
+margin_top = 313.25
+margin_right = 298.73
+margin_bottom = 313.25
+hint_tooltip = "Storage Room Pad
+
+Baboon Blast"
+
+[node name="DK2" parent="TabContainer/Frantic Factory/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 826.73
+margin_top = 481.25
+margin_right = 826.73
+margin_bottom = 481.25
+hint_tooltip = "Testing Room Number Puzzle"
+
+[node name="DK3" parent="TabContainer/Frantic Factory/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 346.73
+margin_top = 393.25
+margin_right = 346.73
+margin_bottom = 393.25
+hint_tooltip = "Power Hut
+
+Coconut"
+
+[node name="DK4" parent="TabContainer/Frantic Factory/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 210.73
+margin_top = 449.25
+margin_right = 210.73
+margin_bottom = 449.25
+hint_tooltip = "Production Room Floor
+
+Strong Kong, Factory ON"
+
+[node name="DK5" parent="TabContainer/Frantic Factory/DK" instance=ExtResource( 1 )]
+process_priority = 1
+material = SubResource( 4 )
+margin_left = 106.73
+margin_top = 33.25
+margin_right = 106.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+
+[node name="Diddy" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Diddy1" parent="TabContainer/Frantic Factory/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 82.7301
+margin_top = 521.25
+margin_right = 82.7301
+margin_bottom = 521.25
+hint_tooltip = "Production Room Top
+
+Simian Spring, Factory ON"
+kong = "Diddy"
+
+[node name="Diddy2" parent="TabContainer/Frantic Factory/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 770.73
+margin_top = 377.25
+margin_right = 770.73
+margin_bottom = 377.25
+hint_tooltip = "Testing Room ABC Blocks
+
+Simian Spring"
+kong = "Diddy"
+
+[node name="Diddy3" parent="TabContainer/Frantic Factory/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1122.73
+margin_top = 833.25
+margin_right = 1122.73
+margin_bottom = 833.25
+hint_tooltip = "R&D Puzzle Fight
+
+Guitar, Chimpy Charge"
+kong = "Diddy"
+
+[node name="Diddy4" parent="TabContainer/Frantic Factory/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 394.73
+margin_top = 393.25
+margin_right = 394.73
+margin_bottom = 393.25
+hint_tooltip = "Switch near Power Hut
+
+Vine, or Minigames Off"
+kong = "Diddy"
+
+[node name="Diddy5" parent="TabContainer/Frantic Factory/Diddy" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 154.73
+margin_top = 33.25
+margin_right = 154.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Diddy"
+
+[node name="Lanky" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Lanky1" parent="TabContainer/Frantic Factory/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 210.73
+margin_top = 521.25
+margin_right = 210.73
+margin_bottom = 521.25
+hint_tooltip = "Production Room Slope
+
+Orangstand, Factory ON
+"
+kong = "Lanky"
+
+[node name="Lanky2" parent="TabContainer/Frantic Factory/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 346.73
+margin_top = 313.25
+margin_right = 346.73
+margin_bottom = 313.25
+hint_tooltip = "Free Chunky Storage Room
+
+Random Kong"
+kong = "Random"
+
+[node name="Lanky3" parent="TabContainer/Frantic Factory/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 826.73
+margin_top = 305.25
+margin_right = 826.73
+margin_bottom = 305.25
+hint_tooltip = "Testing Room Pad
+
+Baboon Balloon"
+kong = "Lanky"
+
+[node name="Lanky4" parent="TabContainer/Frantic Factory/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 946.73
+margin_top = 569.25
+margin_right = 946.73
+margin_bottom = 569.25
+hint_tooltip = "R&D Burp Piano
+
+Trombone"
+kong = "Lanky"
+
+[node name="Lanky5" parent="TabContainer/Frantic Factory/Lanky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 202.73
+margin_top = 33.25
+margin_right = 202.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Lanky"
+
+[node name="Tiny" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Tiny1" parent="TabContainer/Frantic Factory/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 82.7301
+margin_top = 377.25
+margin_right = 82.7301
+margin_bottom = 377.25
+hint_tooltip = "Production Room Jump
+
+Ponytail Twirl, Factory ON"
+kong = "Tiny"
+
+[node name="Tiny2" parent="TabContainer/Frantic Factory/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 610.73
+margin_top = 409.25
+margin_right = 610.73
+margin_bottom = 409.25
+hint_tooltip = "Arcade Room Vents
+
+Mini Monkey"
+kong = "Tiny"
+
+[node name="Tiny3" parent="TabContainer/Frantic Factory/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 714.73
+margin_top = 265.25
+margin_right = 714.73
+margin_bottom = 265.25
+hint_tooltip = "Testing Room Dart Game
+
+Mini Monkey, Feather"
+kong = "Tiny"
+
+[node name="Tiny4" parent="TabContainer/Frantic Factory/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 978.73
+margin_top = 849.25
+margin_right = 978.73
+margin_bottom = 849.25
+hint_tooltip = "R&D Race
+
+Mini Monkey"
+kong = "Tiny"
+
+[node name="Tiny5" parent="TabContainer/Frantic Factory/Tiny" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 250.73
+margin_top = 33.25
+margin_right = 250.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Tiny"
+
+[node name="Chunky" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Chunky1" parent="TabContainer/Frantic Factory/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 210.73
+margin_top = 377.25
+margin_right = 210.73
+margin_bottom = 377.25
+hint_tooltip = "Production Room Top
+
+Factory ON"
+kong = "Chunky"
+
+[node name="Chunky2" parent="TabContainer/Frantic Factory/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 394.73
+margin_top = 313.25
+margin_right = 394.73
+margin_bottom = 313.25
+hint_tooltip = "Storage Room Platforms
+
+Primate Punch"
+kong = "Chunky"
+
+[node name="Chunky3" parent="TabContainer/Frantic Factory/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 546.73
+margin_top = 513.25
+margin_right = 546.73
+margin_bottom = 513.25
+hint_tooltip = "Gate Near Arcade
+
+Primate Punch"
+kong = "Chunky"
+
+[node name="Chunky4" parent="TabContainer/Frantic Factory/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1090.73
+margin_top = 601.25
+margin_right = 1090.73
+margin_bottom = 601.25
+hint_tooltip = "R&D Fight
+
+Triangle, Primate Punch, Hunky Chunky"
+kong = "Chunky"
+
+[node name="Chunky5" parent="TabContainer/Frantic Factory/Chunky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 298.73
+margin_top = 33.25
+margin_right = 298.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Chunky"
+
+[node name="Other" type="Control" parent="TabContainer/Frantic Factory"]
+
+[node name="BattlePad1" parent="TabContainer/Frantic Factory/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
+material = SubResource( 2 )
+margin_left = 1068.0
+margin_top = 768.0
+margin_right = 1068.0
+margin_bottom = 768.0
+hint_tooltip = "Grate in R&D
+
+DK, Gorilla Grab"
+kong = "Battlepad"
+
+[node name="Arcade" parent="TabContainer/Frantic Factory/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
+material = SubResource( 2 )
+margin_left = 668.0
+margin_top = 408.0
+margin_right = 668.0
+margin_bottom = 408.0
+hint_tooltip = "DK Arcade
+
+DK, Baboon Blast, Gorilla Grab"
+kong = "Arcade"
+
+[node name="Boss" parent="TabContainer/Frantic Factory/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
+material = SubResource( 2 )
+margin_left = 4.0
+margin_right = 4.0
+hint_tooltip = "Boss Battle"
+kong = "Boss"
+
+[node name="Kasplat" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Kasplat1" parent="TabContainer/Frantic Factory/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 82.7301
+margin_top = 449.25
+margin_right = 82.7301
+margin_bottom = 449.25
+hint_tooltip = "Production Room Top"
+kong = "Kasplat"
+
+[node name="Kasplat2" parent="TabContainer/Frantic Factory/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 130.73
+margin_top = 521.25
+margin_right = 130.73
+margin_bottom = 521.25
+hint_tooltip = "Production Room Floor"
+kong = "Kasplat"
+
+[node name="Kasplat3" parent="TabContainer/Frantic Factory/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1058.73
+margin_top = 697.25
+margin_right = 1058.73
+margin_bottom = 697.25
+hint_tooltip = "R&D Room"
+kong = "Kasplat"
+
+[node name="Kasplat4" parent="TabContainer/Frantic Factory/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 290.73
+margin_top = 225.25
+margin_right = 290.73
+margin_bottom = 225.25
+hint_tooltip = "Pole between Storage and Arcade"
+kong = "Kasplat"
+
+[node name="Kasplat5" parent="TabContainer/Frantic Factory/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 826.73
+margin_top = 377.25
+margin_right = 826.73
+margin_bottom = 377.25
+hint_tooltip = "Testing Room"
+kong = "Kasplat"
+
+[node name="Storage Room" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 324.0
+margin_top = 144.0
+margin_right = 388.0
+margin_bottom = 208.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Frantic Factory/Storage Room"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Frantic Factory/Storage Room"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Storage Room"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Storage Room2" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 324.0
+margin_top = 144.0
+margin_right = 388.0
+margin_bottom = 208.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Frantic Factory/Storage Room2"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Frantic Factory/Storage Room2"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Storage Room"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_BM" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 116.0
+margin_top = 32.0
+margin_right = 116.0
+margin_bottom = 40.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Frantic Factory/HUD_BM"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Frantic Factory/HUD_BM"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Banana Medals"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Cranky" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 420.0
+margin_top = 32.0
+margin_right = 420.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Frantic Factory/HUD_Cranky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Frantic Factory/HUD_Cranky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Cranky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Funky" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 724.0
+margin_top = 32.0
+margin_right = 724.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Frantic Factory/HUD_Funky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Frantic Factory/HUD_Funky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Funky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Candy" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 1028.0
+margin_top = 32.0
+margin_right = 1028.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Frantic Factory/HUD_Candy"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Frantic Factory/HUD_Candy"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Candy"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Cranky" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 116.0
+margin_right = 116.0
+
+[node name="DK6" parent="TabContainer/Frantic Factory/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Frantic Factory/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Frantic Factory/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Frantic Factory/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Frantic Factory/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Cranky" parent="TabContainer/Frantic Factory/Cranky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 48.0
+margin_top = 304.0
+margin_right = 48.0
+margin_bottom = 304.0
+hint_tooltip = "Storage Room"
+shop = "Cranky"
+
+[node name="Funky" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 420.0
+margin_right = 420.0
+margin_bottom = 8.0
+
+[node name="DK6" parent="TabContainer/Frantic Factory/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Frantic Factory/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Frantic Factory/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Frantic Factory/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Frantic Factory/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Funky" parent="TabContainer/Frantic Factory/Funky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 192.0
+margin_top = 264.0
+margin_right = 192.0
+margin_bottom = 264.0
+hint_tooltip = "Testing Room"
+shop = "Funky"
+
+[node name="Candy" type="Control" parent="TabContainer/Frantic Factory"]
+margin_left = 724.0
+margin_right = 724.0
+
+[node name="DK6" parent="TabContainer/Frantic Factory/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Frantic Factory/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Frantic Factory/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Frantic Factory/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Frantic Factory/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Candy" parent="TabContainer/Frantic Factory/Candy" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = -224.0
+margin_top = 712.0
+margin_right = -224.0
+margin_bottom = 712.0
+hint_tooltip = "Left after Pole behind Gate"
+shop = "Candy"
+
+[node name="Snide" type="Control" parent="TabContainer/Frantic Factory"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Snide" parent="TabContainer/Frantic Factory/Snide" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 164.0
+margin_top = 232.0
+margin_right = 164.0
+margin_bottom = 232.0
+hint_tooltip = "Storage Room"
+shop = "Snide"
+
+[node name="Gloomy Galleon" type="Tabs" parent="TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Gloomy Galleon Sprite" type="Sprite" parent="TabContainer/Gloomy Galleon"]
+modulate = Color( 0.831373, 0.831373, 0.831373, 1 )
+position = Vector2( 635.026, 487.177 )
+scale = Vector2( 3.37355, 2.87464 )
+texture = ExtResource( 10 )
+region_enabled = true
+region_rect = Rect2( 60, 40, 380, 290 )
+
+[node name="HUD2" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="TabContainer/Gloomy Galleon/HUD2"]
+margin_top = -8.0
+margin_right = 1276.0
+margin_bottom = 72.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="ColorRect2" type="ColorRect" parent="TabContainer/Gloomy Galleon/HUD2"]
+margin_left = 4.0
+margin_right = 1268.0
+margin_bottom = 64.0
+color = Color( 0.0901961, 0.0901961, 0.0901961, 1 )
+
+[node name="DK" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="DK1" parent="TabContainer/Gloomy Galleon/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 1042.73
+margin_top = 625.25
+margin_right = 1042.73
+margin_bottom = 625.25
+hint_tooltip = "Lighthouse Inside
+
+Engaurde Switch, Coconut, Lighthouse On"
+
+[node name="DK2" parent="TabContainer/Gloomy Galleon/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 1090.73
+margin_top = 625.25
+margin_right = 1090.73
+margin_bottom = 625.25
+hint_tooltip = "Lighthouse Pad
+
+Enguarde Switch, Coconut, Baboon Blast"
+
+[node name="DK3" parent="TabContainer/Gloomy Galleon/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 186.73
+margin_top = 145.25
+margin_right = 186.73
+margin_bottom = 145.25
+hint_tooltip = "Seal Race
+
+Engaurde, Coconut, Baboon Blast"
+
+[node name="DK4" parent="TabContainer/Gloomy Galleon/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 394.73
+margin_top = 137.25
+margin_right = 394.73
+margin_bottom = 137.25
+hint_tooltip = "Sunk Ship - Music Cactus
+
+Bongo, Dive"
+
+[node name="DK5" parent="TabContainer/Gloomy Galleon/DK" instance=ExtResource( 1 )]
+process_priority = 1
+material = SubResource( 4 )
+margin_left = 106.73
+margin_top = 33.25
+margin_right = 106.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+
+[node name="Diddy" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Diddy1" parent="TabContainer/Gloomy Galleon/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1042.73
+margin_top = 697.25
+margin_right = 1042.73
+margin_bottom = 697.25
+hint_tooltip = "Lighthouse Ship
+
+Lighthouse On, Engarde, Rocketbarrel"
+kong = "Diddy"
+
+[node name="Diddy2" parent="TabContainer/Gloomy Galleon/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1090.73
+margin_top = 697.25
+margin_right = 1090.73
+margin_bottom = 697.25
+hint_tooltip = "Top of Lighthouse - Mecha Fish
+
+Lighthouse On, Engarde, Guitar, Swim, Peanut, Rocketbarrel"
+kong = "Diddy"
+
+[node name="Diddy3" parent="TabContainer/Gloomy Galleon/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 442.73
+margin_top = 137.25
+margin_right = 442.73
+margin_bottom = 137.25
+hint_tooltip = "Sunk Ship - Music Cactus
+
+Guitar, Swim"
+kong = "Diddy"
+
+[node name="Diddy4" parent="TabContainer/Gloomy Galleon/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 90.7301
+margin_top = 193.25
+margin_right = 90.7301
+margin_bottom = 193.25
+hint_tooltip = "Treasure Room
+
+Enguarde, Simian Spring, Swim"
+kong = "Diddy"
+
+[node name="Diddy5" parent="TabContainer/Gloomy Galleon/Diddy" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 154.73
+margin_top = 33.25
+margin_right = 154.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Diddy"
+
+[node name="Lanky" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Lanky1" parent="TabContainer/Gloomy Galleon/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 98.7301
+margin_top = 441.25
+margin_right = 98.7301
+margin_bottom = 441.25
+hint_tooltip = "Sunk Ship - Switch
+
+Swim"
+kong = "Lanky"
+
+[node name="Lanky2" parent="TabContainer/Gloomy Galleon/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = -5.2699
+margin_top = 193.25
+margin_right = -5.2699
+margin_bottom = 193.25
+hint_tooltip = "Treasure Room
+
+Engaurde, Baboon Baloon, Swim"
+kong = "Lanky"
+
+[node name="Lanky3" parent="TabContainer/Gloomy Galleon/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 394.73
+margin_top = 209.25
+margin_right = 394.73
+margin_bottom = 209.25
+hint_tooltip = "Sunk Ship - Music Cactus
+
+Trombone, Swim"
+kong = "Lanky"
+
+[node name="Lanky4" parent="TabContainer/Gloomy Galleon/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 850.73
+margin_top = 641.25
+margin_right = 850.73
+margin_bottom = 641.25
+hint_tooltip = "Engaurde Chest
+
+DK, Coconut, Swim"
+kong = "Lanky"
+
+[node name="Lanky5" parent="TabContainer/Gloomy Galleon/Lanky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 202.73
+margin_top = 33.25
+margin_right = 202.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Lanky"
+
+[node name="Tiny" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Tiny1" parent="TabContainer/Gloomy Galleon/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 98.7301
+margin_top = 513.25
+margin_right = 98.7301
+margin_bottom = 513.25
+hint_tooltip = "Sunk Ship - Switch
+
+Swim"
+kong = "Tiny"
+
+[node name="Tiny2" parent="TabContainer/Gloomy Galleon/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 330.73
+margin_top = 305.25
+margin_right = 330.73
+margin_bottom = 305.25
+hint_tooltip = "Underwater Area
+
+Mini Monkey, Swim"
+kong = "Tiny"
+
+[node name="Tiny3" parent="TabContainer/Gloomy Galleon/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 442.73
+margin_top = 209.25
+margin_right = 442.73
+margin_bottom = 209.25
+hint_tooltip = "Sunk Ship - Music Cactus
+
+Saxaphone, Swim"
+kong = "Tiny"
+
+[node name="Tiny4" parent="TabContainer/Gloomy Galleon/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 42.7301
+margin_top = 193.25
+margin_right = 42.7301
+margin_bottom = 193.25
+hint_tooltip = "Treasure Room Chest
+
+Mini Monkey, Swim, Engaurde
+
+*** 5 Checks if Pearls Randomized, otherwise take pearls to Mermaid in Lighthouse for single check***"
+kong = "Tiny"
+
+[node name="Tiny5" parent="TabContainer/Gloomy Galleon/Tiny" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 250.73
+margin_top = 33.25
+margin_right = 250.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Tiny"
+
+[node name="Chunky" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Chunky1" parent="TabContainer/Gloomy Galleon/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 394.73
+margin_top = 825.25
+margin_right = 394.73
+margin_bottom = 825.25
+hint_tooltip = "Cannon Room
+
+Pineapple, Engaurde, Barrel Throw"
+kong = "Chunky"
+
+[node name="Chunky2" parent="TabContainer/Gloomy Galleon/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1138.73
+margin_top = 697.25
+margin_right = 1138.73
+margin_bottom = 697.25
+hint_tooltip = "K Rool Ship Booze Room
+
+Lighthouse On, Primate Punch, Enguarde"
+kong = "Chunky"
+
+[node name="Chunky3" parent="TabContainer/Gloomy Galleon/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 746.73
+margin_top = 297.25
+margin_right = 746.73
+margin_bottom = 297.25
+hint_tooltip = "Chests near Cranky
+
+Primate Punch"
+kong = "Chunky"
+
+[node name="Chunky4" parent="TabContainer/Gloomy Galleon/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 922.73
+margin_top = 825.25
+margin_right = 922.73
+margin_bottom = 825.25
+hint_tooltip = "Sunk Ship - Lighthouse
+
+DK, Coconut, Triangle, Swim"
+kong = "Chunky"
+
+[node name="Chunky5" parent="TabContainer/Gloomy Galleon/Chunky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 298.73
+margin_top = 33.25
+margin_right = 298.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Chunky"
+
+[node name="Other" type="Control" parent="TabContainer/Gloomy Galleon"]
+
+[node name="BattlePad1" parent="TabContainer/Gloomy Galleon/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
+material = SubResource( 2 )
+margin_left = 644.0
+margin_top = 256.0
+margin_right = 644.0
+margin_bottom = 256.0
+hint_tooltip = "Behind Gate under Cranky
+
+Chunky, Primate Punch"
+kong = "Battlepad"
+
+[node name="Boss" parent="TabContainer/Gloomy Galleon/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
+material = SubResource( 2 )
+margin_left = 4.0
+margin_right = 4.0
+hint_tooltip = "Boss Battle"
+kong = "Boss"
+
+[node name="Kasplat" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Kasplat1" parent="TabContainer/Gloomy Galleon/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 90.7301
+margin_top = 265.25
+margin_right = 90.7301
+margin_bottom = 265.25
+hint_tooltip = "Treasure Room
+
+Engaurde, Diddy, Simian Spring"
+kong = "Kasplat"
+
+[node name="Kasplat2" parent="TabContainer/Gloomy Galleon/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 970.73
+margin_top = 825.25
+margin_right = 970.73
+margin_bottom = 825.25
+hint_tooltip = "Lighthouse
+
+DK, Coconut"
+kong = "Kasplat"
+
+[node name="Kasplat3" parent="TabContainer/Gloomy Galleon/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 442.73
+margin_top = 825.25
+margin_right = 442.73
+margin_bottom = 825.25
+hint_tooltip = "Cannon Room
+
+Engaurde, Chunky, Pineapple, DK, DK Gun"
+kong = "Kasplat"
+
+[node name="Kasplat4" parent="TabContainer/Gloomy Galleon/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 554.73
+margin_top = 361.25
+margin_right = 554.73
+margin_bottom = 361.25
+hint_tooltip = "Platforms near Cranky
+
+Vine"
+kong = "Kasplat"
+
+[node name="Kasplat5" parent="TabContainer/Gloomy Galleon/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 490.73
+margin_top = 137.25
+margin_right = 490.73
+margin_bottom = 137.25
+hint_tooltip = "Music Cactus near Funky"
+kong = "Kasplat"
+
+[node name="Lighthouse" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 1068.0
+margin_top = 528.0
+margin_right = 1068.0
+margin_bottom = 528.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Gloomy Galleon/Lighthouse"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Gloomy Galleon/Lighthouse"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Lighthouse Room"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Cannon Room" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 460.0
+margin_top = 736.0
+margin_right = 460.0
+margin_bottom = 736.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Gloomy Galleon/Cannon Room"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Gloomy Galleon/Cannon Room"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Cannon Room"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Near Cranky" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 676.0
+margin_top = 352.0
+margin_right = 676.0
+margin_bottom = 352.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Gloomy Galleon/Near Cranky"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Gloomy Galleon/Near Cranky"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Near Cranky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Treasure Room" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 60.0
+margin_top = 344.0
+margin_right = 60.0
+margin_bottom = 344.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Gloomy Galleon/Treasure Room"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Gloomy Galleon/Treasure Room"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Treasure Room"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Music Cactus" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 332.0
+margin_top = 136.0
+margin_right = 332.0
+margin_bottom = 136.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Gloomy Galleon/Music Cactus"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Gloomy Galleon/Music Cactus"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Music Cactus"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Entrance" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 252.0
+margin_top = 568.0
+margin_right = 252.0
+margin_bottom = 568.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Gloomy Galleon/Entrance"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Gloomy Galleon/Entrance"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Entrance"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_BM" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 116.0
+margin_top = 32.0
+margin_right = 116.0
+margin_bottom = 40.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Gloomy Galleon/HUD_BM"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Gloomy Galleon/HUD_BM"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Banana Medals"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Cranky" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 420.0
+margin_top = 32.0
+margin_right = 420.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Gloomy Galleon/HUD_Cranky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Gloomy Galleon/HUD_Cranky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Cranky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Funky" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 724.0
+margin_top = 32.0
+margin_right = 724.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Gloomy Galleon/HUD_Funky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Gloomy Galleon/HUD_Funky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Funky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Candy" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 1028.0
+margin_top = 32.0
+margin_right = 1028.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Gloomy Galleon/HUD_Candy"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Gloomy Galleon/HUD_Candy"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Candy"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Cranky" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 116.0
+margin_right = 116.0
+
+[node name="DK6" parent="TabContainer/Gloomy Galleon/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Gloomy Galleon/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Gloomy Galleon/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Gloomy Galleon/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Gloomy Galleon/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Cranky" parent="TabContainer/Gloomy Galleon/Cranky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 480.0
+margin_top = 256.0
+margin_right = 480.0
+margin_bottom = 256.0
+hint_tooltip = "Storage Room"
+shop = "Cranky"
+
+[node name="Funky" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 420.0
+margin_right = 420.0
+margin_bottom = 8.0
+
+[node name="DK6" parent="TabContainer/Gloomy Galleon/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Gloomy Galleon/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Gloomy Galleon/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Gloomy Galleon/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Gloomy Galleon/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Funky" parent="TabContainer/Gloomy Galleon/Funky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = -64.0
+margin_top = 208.0
+margin_right = -64.0
+margin_bottom = 208.0
+hint_tooltip = "Testing Room"
+shop = "Funky"
+
+[node name="Candy" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_left = 724.0
+margin_right = 724.0
+
+[node name="DK6" parent="TabContainer/Gloomy Galleon/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Gloomy Galleon/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Gloomy Galleon/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Gloomy Galleon/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Gloomy Galleon/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Candy" parent="TabContainer/Gloomy Galleon/Candy" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = -560.0
+margin_top = 248.0
+margin_right = -560.0
+margin_bottom = 248.0
+hint_tooltip = "Left after Pole behind Gate"
+shop = "Candy"
+
+[node name="Snide" type="Control" parent="TabContainer/Gloomy Galleon"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Snide" parent="TabContainer/Gloomy Galleon/Snide" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 1036.0
+margin_top = 424.0
+margin_right = 1036.0
+margin_bottom = 424.0
+hint_tooltip = "Storage Room"
+shop = "Snide"
+
+[node name="Fungi Forest" type="Tabs" parent="TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Fungi Forest Sprite" type="Sprite" parent="TabContainer/Fungi Forest"]
+modulate = Color( 0.831373, 0.831373, 0.831373, 1 )
+position = Vector2( 639.079, 486.842 )
+scale = Vector2( 3.26626, 2.52823 )
+texture = ExtResource( 11 )
+region_enabled = true
+region_rect = Rect2( 70, 40, 390, 330 )
+
+[node name="HUD2" type="Control" parent="TabContainer/Fungi Forest"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="TabContainer/Fungi Forest/HUD2"]
+margin_top = -8.0
+margin_right = 1276.0
+margin_bottom = 72.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="ColorRect2" type="ColorRect" parent="TabContainer/Fungi Forest/HUD2"]
+margin_left = 4.0
+margin_right = 1268.0
+margin_bottom = 64.0
+color = Color( 0.0901961, 0.0901961, 0.0901961, 1 )
+
+[node name="DK" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="DK1" parent="TabContainer/Fungi Forest/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 146.73
+margin_top = 377.25
+margin_right = 146.73
+margin_bottom = 377.25
+hint_tooltip = "Mill Lever Puzzle
+
+Gorilla Grab, Super Slam, Nighttime"
+
+[node name="DK2" parent="TabContainer/Fungi Forest/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 82.7301
+margin_top = 625.25
+margin_right = 82.7301
+margin_bottom = 625.25
+hint_tooltip = "Thorn Cabin Near Mill
+
+Strong Kong, Super Slam, Nighttime"
+
+[node name="DK3" parent="TabContainer/Fungi Forest/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 754.73
+margin_top = 785.25
+margin_right = 754.73
+margin_bottom = 785.25
+hint_tooltip = "Giant Mushroom Gun Switches
+
+All Kongs, All Guns"
+
+[node name="DK4" parent="TabContainer/Fungi Forest/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 1010.73
+margin_top = 537.25
+margin_right = 1010.73
+margin_bottom = 537.25
+hint_tooltip = "Mushroom Exterior Pad
+
+Baboon Blast"
+
+[node name="DK5" parent="TabContainer/Fungi Forest/DK" instance=ExtResource( 1 )]
+process_priority = 1
+material = SubResource( 4 )
+margin_left = 106.73
+margin_top = 33.25
+margin_right = 106.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+
+[node name="Diddy" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Diddy1" parent="TabContainer/Fungi Forest/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 194.73
+margin_top = 377.25
+margin_right = 194.73
+margin_bottom = 377.25
+hint_tooltip = "Mill Winch
+
+Peanut, Chimpy Charge, Guitar, Super Slam"
+kong = "Diddy"
+
+[node name="Diddy2" parent="TabContainer/Fungi Forest/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 114.73
+margin_top = 249.25
+margin_right = 114.73
+margin_bottom = 249.25
+hint_tooltip = "Building Near Mill
+
+Simian Spring, Guitar, Nighttime"
+kong = "Diddy"
+
+[node name="Diddy3" parent="TabContainer/Fungi Forest/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1074.73
+margin_top = 409.25
+margin_right = 1074.73
+margin_bottom = 409.25
+hint_tooltip = "Exterior Mushroom - Top
+
+Rocketbarrel"
+kong = "Diddy"
+
+[node name="Diddy4" parent="TabContainer/Fungi Forest/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1138.73
+margin_top = 185.25
+margin_right = 1138.73
+margin_bottom = 185.25
+hint_tooltip = "Owl Race
+
+Rocketbarrel, Guitar, Lanky, Grape, Nighttime"
+kong = "Diddy"
+
+[node name="Diddy5" parent="TabContainer/Fungi Forest/Diddy" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 154.73
+margin_top = 33.25
+margin_right = 154.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Diddy"
+
+[node name="Lanky" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Lanky1" parent="TabContainer/Fungi Forest/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 242.73
+margin_top = 377.25
+margin_right = 242.73
+margin_bottom = 377.25
+hint_tooltip = "Mill Nighttime
+
+Grape, Super Slam, Nighttime"
+kong = "Lanky"
+
+[node name="Lanky2" parent="TabContainer/Fungi Forest/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1026.73
+margin_top = 409.25
+margin_right = 1026.73
+margin_bottom = 409.25
+hint_tooltip = "Top of Mushroom - Enemies
+
+Grape, Orangstand, Super Slam"
+kong = "Lanky"
+
+[node name="Lanky3" parent="TabContainer/Fungi Forest/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 978.73
+margin_top = 409.25
+margin_right = 978.73
+margin_bottom = 409.25
+hint_tooltip = "Top of Mushroom - Puzzle
+
+Orangstand, Super Slam"
+kong = "Lanky"
+
+[node name="Lanky4" parent="TabContainer/Fungi Forest/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 994.73
+margin_top = 129.25
+margin_right = 994.73
+margin_bottom = 129.25
+hint_tooltip = "Rabbit Race
+
+Grape, Orangstand Sprint, Trombone"
+kong = "Lanky"
+
+[node name="Lanky5" parent="TabContainer/Fungi Forest/Lanky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 202.73
+margin_top = 33.25
+margin_right = 202.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Lanky"
+
+[node name="Tiny" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Tiny1" parent="TabContainer/Fungi Forest/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 850.73
+margin_top = 785.25
+margin_right = 850.73
+margin_bottom = 785.25
+hint_tooltip = "Giant Mushroom - Interior
+
+Super Slam"
+kong = "Tiny"
+
+[node name="Tiny2" parent="TabContainer/Fungi Forest/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1202.73
+margin_top = 145.25
+margin_right = 1202.73
+margin_bottom = 145.25
+hint_tooltip = "Stump - Lanky Locked Area
+
+Mini Monkey, Saxaphone, Lanky, Grape
+
+** 2 checks if Bean is randomized **"
+kong = "Tiny"
+
+[node name="Tiny3" parent="TabContainer/Fungi Forest/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 506.73
+margin_top = 825.25
+margin_right = 506.73
+margin_bottom = 825.25
+hint_tooltip = "Beanstalk
+
+Bean, Chunky, Pineapple, Feather, Mini Monkey, Saxaphone"
+kong = "Tiny"
+
+[node name="Tiny4" parent="TabContainer/Fungi Forest/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 194.73
+margin_top = 449.25
+margin_right = 194.73
+margin_bottom = 449.25
+hint_tooltip = "Mill Spider Fight
+
+Feather, Mini Monkey, Chunky, Primate Punch, Nighttime"
+kong = "Tiny"
+
+[node name="Tiny5" parent="TabContainer/Fungi Forest/Tiny" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 250.73
+margin_top = 33.25
+margin_right = 250.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Tiny"
+
+[node name="Chunky" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Chunky1" parent="TabContainer/Fungi Forest/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 146.73
+margin_top = 449.25
+margin_right = 146.73
+margin_bottom = 449.25
+hint_tooltip = "Mill Barrels
+
+Primate Punch, Triangle, Barrel Throw"
+kong = "Chunky"
+
+[node name="Chunky2" parent="TabContainer/Fungi Forest/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 626.73
+margin_top = 289.25
+margin_right = 626.73
+margin_bottom = 289.25
+hint_tooltip = "Well Mine Cart
+
+Super Slam"
+kong = "Chunky"
+
+[node name="Chunky3" parent="TabContainer/Fungi Forest/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 370.73
+margin_top = 745.25
+margin_right = 370.73
+margin_bottom = 745.25
+hint_tooltip = "Apples vs Tomatos - Beanstalk Area
+
+Pineapple, Tiny, Feather, Hunky Chunky"
+kong = "Chunky"
+
+[node name="Chunky4" parent="TabContainer/Fungi Forest/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1122.73
+margin_top = 409.25
+margin_right = 1122.73
+margin_bottom = 409.25
+hint_tooltip = "Giant Mushroom - Top
+
+Super Slam, Pineapple"
+kong = "Chunky"
+
+[node name="Chunky5" parent="TabContainer/Fungi Forest/Chunky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 298.73
+margin_top = 33.25
+margin_right = 298.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Chunky"
+
+[node name="Other" type="Control" parent="TabContainer/Fungi Forest"]
+
+[node name="BattlePad1" parent="TabContainer/Fungi Forest/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
+material = SubResource( 2 )
+margin_left = 956.0
+margin_top = 784.0
+margin_right = 956.0
+margin_bottom = 784.0
+hint_tooltip = "Giant Mushroom - Interior
+
+Vine Swing"
+kong = "Battlepad"
+
+[node name="Boss" parent="TabContainer/Fungi Forest/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
+material = SubResource( 2 )
+margin_left = 4.0
+margin_right = 4.0
+hint_tooltip = "Boss Battle"
+kong = "Boss"
+
+[node name="Kasplat" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Kasplat1" parent="TabContainer/Fungi Forest/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 34.7301
+margin_top = 625.25
+margin_right = 34.7301
+margin_bottom = 625.25
+hint_tooltip = "Near Thorn Bushes
+
+Nighttime"
+kong = "Kasplat"
+
+[node name="Kasplat2" parent="TabContainer/Fungi Forest/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 802.73
+margin_top = 785.25
+margin_right = 802.73
+margin_bottom = 785.25
+hint_tooltip = "Giant Mushroom - Interior"
+kong = "Kasplat"
+
+[node name="Kasplat3" parent="TabContainer/Fungi Forest/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1090.73
+margin_top = 185.25
+margin_right = 1090.73
+margin_bottom = 185.25
+hint_tooltip = "Lanky Locked Area
+
+Lanky, Grape"
+kong = "Kasplat"
+
+[node name="Kasplat4" parent="TabContainer/Fungi Forest/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1058.73
+margin_top = 537.25
+margin_right = 1058.73
+margin_bottom = 537.25
+hint_tooltip = "Mushroom Exterior"
+kong = "Kasplat"
+
+[node name="Kasplat5" parent="TabContainer/Fungi Forest/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 898.73
+margin_top = 785.25
+margin_right = 898.73
+margin_bottom = 785.25
+hint_tooltip = "Giant Mushroom - Night
+
+Nighttime, Vine Swing"
+kong = "Kasplat"
+
+[node name="Entrance" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 652.0
+margin_top = 448.0
+margin_right = 652.0
+margin_bottom = 448.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Fungi Forest/Entrance"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Fungi Forest/Entrance"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Entrance"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Beanstalk" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 476.0
+margin_top = 664.0
+margin_right = 476.0
+margin_bottom = 664.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Fungi Forest/Beanstalk"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Fungi Forest/Beanstalk"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Beanstalk Area"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Mill Area" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 212.0
+margin_top = 528.0
+margin_right = 212.0
+margin_bottom = 528.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Fungi Forest/Mill Area"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Fungi Forest/Mill Area"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Mill Area"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Lanky Locked Area" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 1036.0
+margin_top = 264.0
+margin_right = 1036.0
+margin_bottom = 264.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Fungi Forest/Lanky Locked Area"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Fungi Forest/Lanky Locked Area"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Lanky Locked Area"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Giant Mushroom" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 924.0
+margin_top = 472.0
+margin_right = 924.0
+margin_bottom = 472.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Fungi Forest/Giant Mushroom"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Fungi Forest/Giant Mushroom"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Giant Mushroom"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Giant Mushroom - Interior" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 812.0
+margin_top = 712.0
+margin_right = 812.0
+margin_bottom = 712.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Fungi Forest/Giant Mushroom - Interior"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Fungi Forest/Giant Mushroom - Interior"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Giant Mushroom - Interior"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_BM" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 116.0
+margin_top = 32.0
+margin_right = 116.0
+margin_bottom = 40.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Fungi Forest/HUD_BM"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Fungi Forest/HUD_BM"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Banana Medals"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Cranky" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 420.0
+margin_top = 32.0
+margin_right = 420.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Fungi Forest/HUD_Cranky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Fungi Forest/HUD_Cranky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Cranky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Funky" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 724.0
+margin_top = 32.0
+margin_right = 724.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Fungi Forest/HUD_Funky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Fungi Forest/HUD_Funky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Funky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Candy" type="Control" parent="TabContainer/Fungi Forest"]
+visible = false
+margin_left = 1028.0
+margin_top = 32.0
+margin_right = 1028.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Fungi Forest/HUD_Candy"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Fungi Forest/HUD_Candy"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Candy"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Cranky" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 116.0
+margin_right = 116.0
+
+[node name="DK6" parent="TabContainer/Fungi Forest/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Fungi Forest/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Fungi Forest/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Fungi Forest/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Fungi Forest/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Cranky" parent="TabContainer/Fungi Forest/Cranky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 1064.0
+margin_top = 480.0
+margin_right = 1064.0
+margin_bottom = 480.0
+hint_tooltip = "Storage Room"
+shop = "Cranky"
+
+[node name="Funky" type="Control" parent="TabContainer/Fungi Forest"]
+margin_left = 420.0
+margin_right = 420.0
+margin_bottom = 8.0
+
+[node name="DK6" parent="TabContainer/Fungi Forest/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Fungi Forest/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Fungi Forest/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Fungi Forest/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Fungi Forest/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Funky" parent="TabContainer/Fungi Forest/Funky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = -80.0
+margin_top = 832.0
+margin_right = -80.0
+margin_bottom = 832.0
+hint_tooltip = "Testing Room"
+shop = "Funky"
+
+[node name="Candy" type="Control" parent="TabContainer/Fungi Forest"]
+visible = false
+margin_left = 724.0
+margin_right = 724.0
+
+[node name="DK6" parent="TabContainer/Fungi Forest/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Fungi Forest/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Fungi Forest/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Fungi Forest/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Fungi Forest/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Candy" parent="TabContainer/Fungi Forest/Candy" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = -40.0
+margin_top = 656.0
+margin_right = -40.0
+margin_bottom = 656.0
+hint_tooltip = "Left after Pole behind Gate"
+shop = "Candy"
+
+[node name="Snide" type="Control" parent="TabContainer/Fungi Forest"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Snide" parent="TabContainer/Fungi Forest/Snide" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 260.0
+margin_top = 264.0
+margin_right = 260.0
+margin_bottom = 264.0
+hint_tooltip = "Storage Room"
+shop = "Snide"
+
+[node name="Crystal Caves" type="Tabs" parent="TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Crystal Caves Sprite" type="Sprite" parent="TabContainer/Crystal Caves"]
+modulate = Color( 0.831373, 0.831373, 0.831373, 1 )
+position = Vector2( 637.778, 489.215 )
+scale = Vector2( 3.03915, 2.67603 )
+texture = ExtResource( 12 )
+region_enabled = true
+region_rect = Rect2( 55, 40, 420, 310 )
+
+[node name="HUD2" type="Control" parent="TabContainer/Crystal Caves"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="TabContainer/Crystal Caves/HUD2"]
+margin_top = -8.0
+margin_right = 1276.0
+margin_bottom = 72.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="ColorRect2" type="ColorRect" parent="TabContainer/Crystal Caves/HUD2"]
+margin_left = 4.0
+margin_right = 1268.0
+margin_bottom = 64.0
+color = Color( 0.0901961, 0.0901961, 0.0901961, 1 )
+
+[node name="DK" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="DK1" parent="TabContainer/Crystal Caves/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 842.73
+margin_top = 321.25
+margin_right = 842.73
+margin_bottom = 321.25
+hint_tooltip = "Pad near Cranky's
+
+Baboon Blast"
+
+[node name="DK2" parent="TabContainer/Crystal Caves/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 1058.73
+margin_top = 569.25
+margin_right = 1058.73
+margin_bottom = 569.25
+hint_tooltip = "Igloo - Thorns
+
+Bongos, Strong Kong"
+
+[node name="DK3" parent="TabContainer/Crystal Caves/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 2.7301
+margin_top = 417.25
+margin_right = 2.7301
+margin_bottom = 417.25
+hint_tooltip = "Main Lodge - Bees
+
+Bongos, Coconut"
+
+[node name="DK4" parent="TabContainer/Crystal Caves/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 258.73
+margin_top = 257.25
+margin_right = 258.73
+margin_bottom = 257.25
+hint_tooltip = "Side Lodge - Puzzle
+
+Bongos"
+
+[node name="DK5" parent="TabContainer/Crystal Caves/DK" instance=ExtResource( 1 )]
+process_priority = 1
+material = SubResource( 4 )
+margin_left = 106.73
+margin_top = 33.25
+margin_right = 106.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+
+[node name="Diddy" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Diddy1" parent="TabContainer/Crystal Caves/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1106.73
+margin_top = 569.25
+margin_right = 1106.73
+margin_bottom = 569.25
+hint_tooltip = "Igloo - Barrel Puzzle
+
+Guitar, Barrel Throw"
+kong = "Diddy"
+
+[node name="Diddy2" parent="TabContainer/Crystal Caves/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 178.73
+margin_top = 529.25
+margin_right = 178.73
+margin_bottom = 529.25
+hint_tooltip = "Waterfall
+
+Rocketbarrel"
+kong = "Diddy"
+
+[node name="Diddy3" parent="TabContainer/Crystal Caves/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 2.7301
+margin_top = 489.25
+margin_right = 2.7301
+margin_bottom = 489.25
+hint_tooltip = "Main Lodge - Kremlings
+
+Guitar, Oranges"
+kong = "Diddy"
+
+[node name="Diddy4" parent="TabContainer/Crystal Caves/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 2.7301
+margin_top = 345.25
+margin_right = 2.7301
+margin_bottom = 345.25
+hint_tooltip = "Main Lodge - Candles
+
+Guitar, Simian Spring, Rocketbarrel"
+kong = "Diddy"
+
+[node name="Diddy5" parent="TabContainer/Crystal Caves/Diddy" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 154.73
+margin_top = 33.25
+margin_right = 154.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Diddy"
+
+[node name="Lanky" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Lanky1" parent="TabContainer/Crystal Caves/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1154.73
+margin_top = 569.25
+margin_right = 1154.73
+margin_bottom = 569.25
+hint_tooltip = "Igloo - Pads
+
+Baboon Balloon, Trombone"
+kong = "Lanky"
+
+[node name="Lanky2" parent="TabContainer/Crystal Caves/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 498.73
+margin_top = 521.25
+margin_right = 498.73
+margin_bottom = 521.25
+hint_tooltip = "Ice Castle - Puzzle
+
+Super Slam"
+kong = "Lanky"
+
+[node name="Lanky3" parent="TabContainer/Crystal Caves/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 546.73
+margin_top = 521.25
+margin_right = 546.73
+margin_bottom = 521.25
+hint_tooltip = "Ice Castle - Bug Race
+
+Super Slam, Baboon Balloon"
+kong = "Lanky"
+
+[node name="Lanky4" parent="TabContainer/Crystal Caves/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 354.73
+margin_top = 329.25
+margin_right = 354.73
+margin_bottom = 329.25
+hint_tooltip = "Side Lodge
+
+Baboon Balloon, Trombone, Orangstand Sprint"
+kong = "Lanky"
+
+[node name="Lanky5" parent="TabContainer/Crystal Caves/Lanky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 202.73
+margin_top = 33.25
+margin_right = 202.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Lanky"
+
+[node name="Tiny" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Tiny1" parent="TabContainer/Crystal Caves/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 50.7301
+margin_top = 417.25
+margin_right = 50.7301
+margin_bottom = 417.25
+hint_tooltip = "Main Lodge - Klaptraps
+
+Saxaphone, Oranges"
+kong = "Tiny"
+
+[node name="Tiny2" parent="TabContainer/Crystal Caves/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1058.73
+margin_top = 641.25
+margin_right = 1058.73
+margin_bottom = 641.25
+hint_tooltip = "Igloo - Moving Platform
+
+Saxaphone"
+kong = "Tiny"
+
+[node name="Tiny3" parent="TabContainer/Crystal Caves/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1178.73
+margin_top = 409.25
+margin_right = 1178.73
+margin_bottom = 409.25
+hint_tooltip = "Tiny Area near Cranky
+
+Mini Monkey"
+kong = "Tiny"
+
+[node name="Tiny4" parent="TabContainer/Crystal Caves/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 42.7301
+margin_top = 729.25
+margin_right = 42.7301
+margin_bottom = 729.25
+hint_tooltip = "Monkeyport Near Funkys
+
+Monkeyport, Ponytail, Mini Monkey"
+kong = "Tiny"
+
+[node name="Tiny5" parent="TabContainer/Crystal Caves/Tiny" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 250.73
+margin_top = 33.25
+margin_right = 250.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Tiny"
+
+[node name="Chunky" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Chunky1" parent="TabContainer/Crystal Caves/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 298.73
+margin_top = 705.25
+margin_right = 298.73
+margin_bottom = 705.25
+hint_tooltip = "Ice Wall near Entrance
+
+Primate Punch, Gorilla Gone"
+kong = "Chunky"
+
+[node name="Chunky2" parent="TabContainer/Crystal Caves/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 658.73
+margin_top = 569.25
+margin_right = 658.73
+margin_bottom = 569.25
+hint_tooltip = "2 Boulders and an Igloo
+
+Primate Punch, Hunky Chunky, Barrel Throw"
+kong = "Chunky"
+
+[node name="Chunky3" parent="TabContainer/Crystal Caves/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 50.7301
+margin_top = 489.25
+margin_right = 50.7301
+margin_bottom = 489.25
+hint_tooltip = "Main Lodge - Spotlights
+
+Triangle"
+kong = "Chunky"
+
+[node name="Chunky4" parent="TabContainer/Crystal Caves/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1106.73
+margin_top = 641.25
+margin_right = 1106.73
+margin_bottom = 641.25
+hint_tooltip = "Igloo - Save the Bunny
+
+Triangle"
+kong = "Chunky"
+
+[node name="Chunky5" parent="TabContainer/Crystal Caves/Chunky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 298.73
+margin_top = 33.25
+margin_right = 298.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Chunky"
+
+[node name="Other" type="Control" parent="TabContainer/Crystal Caves"]
+
+[node name="BattlePad1" parent="TabContainer/Crystal Caves/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
+material = SubResource( 2 )
+margin_left = 316.0
+margin_top = 256.0
+margin_right = 316.0
+margin_bottom = 256.0
+hint_tooltip = "DK Puzzle Lodge
+
+DK, Bongos"
+kong = "Battlepad"
+
+[node name="Boss" parent="TabContainer/Crystal Caves/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
+material = SubResource( 2 )
+margin_left = 4.0
+margin_right = 4.0
+hint_tooltip = "Boss Battle"
+kong = "Boss"
+
+[node name="Kasplat" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Kasplat1" parent="TabContainer/Crystal Caves/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 602.73
+margin_top = 633.25
+margin_right = 602.73
+margin_bottom = 633.25
+hint_tooltip = "Near Ice Castle"
+kong = "Kasplat"
+
+[node name="Kasplat2" parent="TabContainer/Crystal Caves/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 90.7301
+margin_top = 729.25
+margin_right = 90.7301
+margin_bottom = 729.25
+hint_tooltip = "Tiny Area w/ #4 Warp Pad
+
+Tiny, Mini Monkey, Ponytail"
+kong = "Kasplat"
+
+[node name="Kasplat3" parent="TabContainer/Crystal Caves/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 266.73
+margin_top = 601.25
+margin_right = 266.73
+margin_bottom = 601.25
+hint_tooltip = "Tall Pillar"
+kong = "Kasplat"
+
+[node name="Kasplat4" parent="TabContainer/Crystal Caves/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 210.73
+margin_top = 409.25
+margin_right = 210.73
+margin_bottom = 409.25
+hint_tooltip = "Near Lodges"
+kong = "Kasplat"
+
+[node name="Kasplat5" parent="TabContainer/Crystal Caves/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1154.73
+margin_top = 641.25
+margin_right = 1154.73
+margin_bottom = 641.25
+hint_tooltip = "On Igloo"
+kong = "Kasplat"
+
+[node name="Ice Castle" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 564.0
+margin_top = 416.0
+margin_right = 564.0
+margin_bottom = 416.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Crystal Caves/Ice Castle"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Crystal Caves/Ice Castle"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Ice Castle"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Main Lodge" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 60.0
+margin_top = 264.0
+margin_right = 60.0
+margin_bottom = 264.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Crystal Caves/Main Lodge"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Crystal Caves/Main Lodge"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Main Lodge"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Igloo" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 1124.0
+margin_top = 488.0
+margin_right = 1124.0
+margin_bottom = 488.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Crystal Caves/Igloo"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Crystal Caves/Igloo"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Igloo"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_BM" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 116.0
+margin_top = 32.0
+margin_right = 116.0
+margin_bottom = 40.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Crystal Caves/HUD_BM"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Crystal Caves/HUD_BM"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Banana Medals"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Cranky" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 420.0
+margin_top = 32.0
+margin_right = 420.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Crystal Caves/HUD_Cranky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Crystal Caves/HUD_Cranky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Cranky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Funky" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 724.0
+margin_top = 32.0
+margin_right = 724.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Crystal Caves/HUD_Funky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Crystal Caves/HUD_Funky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Funky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Candy" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 1028.0
+margin_top = 32.0
+margin_right = 1028.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Crystal Caves/HUD_Candy"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Crystal Caves/HUD_Candy"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Candy"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Cranky" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 116.0
+margin_right = 116.0
+
+[node name="DK6" parent="TabContainer/Crystal Caves/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Crystal Caves/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Crystal Caves/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Crystal Caves/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Crystal Caves/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Cranky" parent="TabContainer/Crystal Caves/Cranky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 776.0
+margin_top = 464.0
+margin_right = 776.0
+margin_bottom = 464.0
+hint_tooltip = "Storage Room"
+shop = "Cranky"
+
+[node name="Funky" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 420.0
+margin_right = 420.0
+margin_bottom = 8.0
+
+[node name="DK6" parent="TabContainer/Crystal Caves/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Crystal Caves/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Crystal Caves/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Crystal Caves/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Crystal Caves/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Funky" parent="TabContainer/Crystal Caves/Funky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = -176.0
+margin_top = 528.0
+margin_right = -176.0
+margin_bottom = 528.0
+hint_tooltip = "Testing Room"
+shop = "Funky"
+
+[node name="Candy" type="Control" parent="TabContainer/Crystal Caves"]
+margin_left = 724.0
+margin_right = 724.0
+
+[node name="DK6" parent="TabContainer/Crystal Caves/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Crystal Caves/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Crystal Caves/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Crystal Caves/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Crystal Caves/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Candy" parent="TabContainer/Crystal Caves/Candy" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = -624.0
+margin_top = 344.0
+margin_right = -624.0
+margin_bottom = 344.0
+hint_tooltip = "Left after Pole behind Gate"
+shop = "Candy"
+
+[node name="Snide" type="Control" parent="TabContainer/Crystal Caves"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Snide" parent="TabContainer/Crystal Caves/Snide" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 812.0
+margin_top = 712.0
+margin_right = 812.0
+margin_bottom = 712.0
+hint_tooltip = "Storage Room"
+shop = "Snide"
+
+[node name="Creepy Castle" type="Tabs" parent="TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Creepy Castle Sprite" type="Sprite" parent="TabContainer/Creepy Castle"]
+modulate = Color( 0.831373, 0.831373, 0.831373, 1 )
+position = Vector2( 638.645, 489.215 )
+scale = Vector2( 3.18677, 2.67603 )
+texture = ExtResource( 13 )
+region_enabled = true
+region_rect = Rect2( 60, 40, 400, 310 )
+
+[node name="HUD2" type="Control" parent="TabContainer/Creepy Castle"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="TabContainer/Creepy Castle/HUD2"]
+margin_top = -8.0
+margin_right = 1276.0
+margin_bottom = 72.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="ColorRect2" type="ColorRect" parent="TabContainer/Creepy Castle/HUD2"]
+margin_left = 4.0
+margin_right = 1268.0
+margin_bottom = 64.0
+color = Color( 0.0901961, 0.0901961, 0.0901961, 1 )
+
+[node name="DK" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="DK1" parent="TabContainer/Creepy Castle/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 386.73
+margin_top = 825.25
+margin_right = 386.73
+margin_bottom = 825.25
+hint_tooltip = "Tree - Sniper
+
+Baboon Blast, Coconut, Sniper"
+
+[node name="DK2" parent="TabContainer/Creepy Castle/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 178.73
+margin_top = 329.25
+margin_right = 178.73
+margin_bottom = 329.25
+hint_tooltip = "Crypt Mine Cart Race
+
+Gorilla Grab, Coconut"
+
+[node name="DK3" parent="TabContainer/Creepy Castle/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 1130.73
+margin_top = 353.25
+margin_right = 1130.73
+margin_bottom = 353.25
+hint_tooltip = "Dungeon Puzzle
+
+Super Duper Slam"
+
+[node name="DK4" parent="TabContainer/Creepy Castle/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 450.73
+margin_top = 665.25
+margin_right = 450.73
+margin_bottom = 665.25
+hint_tooltip = "Library
+
+Strong Kong, Super Duper Slam"
+
+[node name="DK5" parent="TabContainer/Creepy Castle/DK" instance=ExtResource( 1 )]
+process_priority = 1
+material = SubResource( 4 )
+margin_left = 106.73
+margin_top = 33.25
+margin_right = 106.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+
+[node name="Diddy" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Diddy1" parent="TabContainer/Creepy Castle/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 178.73
+margin_top = 257.25
+margin_right = 178.73
+margin_bottom = 257.25
+hint_tooltip = "Crypt Number Puzzle
+
+Peanut, Chimpy Charge"
+kong = "Diddy"
+
+[node name="Diddy2" parent="TabContainer/Creepy Castle/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 1194.73
+margin_top = 417.25
+margin_right = 1194.73
+margin_bottom = 417.25
+hint_tooltip = "Dungeon Sniper
+
+Peanut, Super Duper Slam, Sniper, Vine Swing"
+kong = "Diddy"
+
+[node name="Diddy3" parent="TabContainer/Creepy Castle/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 58.7301
+margin_top = 633.25
+margin_right = 58.7301
+margin_bottom = 633.25
+hint_tooltip = "Ballroom Candles
+
+Super Duper Slam, Rocketbarrel"
+kong = "Diddy"
+
+[node name="Diddy4" parent="TabContainer/Creepy Castle/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 210.73
+margin_top = 633.25
+margin_right = 210.73
+margin_bottom = 633.25
+hint_tooltip = "Top of Castle
+
+Rocketbarrel"
+kong = "Diddy"
+
+[node name="Diddy5" parent="TabContainer/Creepy Castle/Diddy" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 154.73
+margin_top = 33.25
+margin_right = 154.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Diddy"
+
+[node name="Lanky" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Lanky1" parent="TabContainer/Creepy Castle/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 554.73
+margin_top = 281.25
+margin_right = 554.73
+margin_bottom = 281.25
+hint_tooltip = "Crypt Sprint
+
+Grape, Orangstand Sprint, Trombone, Vine Swing"
+kong = "Lanky"
+
+[node name="Lanky2" parent="TabContainer/Creepy Castle/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1130.73
+margin_top = 497.25
+margin_right = 1130.73
+margin_bottom = 497.25
+hint_tooltip = "Dungeon Pads
+
+Baboon Balloon, Trombone, Super Duper Slam"
+kong = "Lanky"
+
+[node name="Lanky3" parent="TabContainer/Creepy Castle/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = -5.2699
+margin_top = 417.25
+margin_right = -5.2699
+margin_bottom = 417.25
+hint_tooltip = "Greenhouse Hedge Maze
+
+Super Duper Slam, Orangestand Sprint"
+kong = "Lanky"
+
+[node name="Lanky4" parent="TabContainer/Creepy Castle/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 162.73
+margin_top = 633.25
+margin_right = 162.73
+margin_bottom = 633.25
+hint_tooltip = "Top of Castle - Sniper
+
+Super Duper Slam, Grape, Sniper, Baboon Balloon"
+kong = "Lanky"
+
+[node name="Lanky5" parent="TabContainer/Creepy Castle/Lanky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 202.73
+margin_top = 33.25
+margin_right = 202.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Lanky"
+
+[node name="Tiny" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Tiny1" parent="TabContainer/Creepy Castle/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 554.73
+margin_top = 353.25
+margin_right = 554.73
+margin_bottom = 353.25
+hint_tooltip = "Crypt Jumping Puzzle
+
+Feather, Ponytail, Super Duper Slam"
+kong = "Tiny"
+
+[node name="Tiny2" parent="TabContainer/Creepy Castle/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1210.73
+margin_top = 273.25
+margin_right = 1210.73
+margin_bottom = 273.25
+hint_tooltip = "Dungeon Chasm
+
+Ponytail"
+kong = "Tiny"
+
+[node name="Tiny3" parent="TabContainer/Creepy Castle/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 58.7301
+margin_top = 705.25
+margin_right = 58.7301
+margin_bottom = 705.25
+hint_tooltip = "Greenhouse Silo
+
+Mini Monkey, Feather"
+kong = "Tiny"
+
+[node name="Tiny4" parent="TabContainer/Creepy Castle/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 42.7301
+margin_top = 417.25
+margin_right = 42.7301
+margin_bottom = 417.25
+hint_tooltip = "Ballroom - Race
+
+Diddy, Super Duper Slam, Mini Monkey, Monkeyport"
+kong = "Tiny"
+
+[node name="Tiny5" parent="TabContainer/Creepy Castle/Tiny" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 250.73
+margin_top = 33.25
+margin_right = 250.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Tiny"
+
+[node name="Chunky" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Chunky1" parent="TabContainer/Creepy Castle/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 434.73
+margin_top = 825.25
+margin_right = 434.73
+margin_bottom = 825.25
+hint_tooltip = "Tree - Sniper
+
+Pineapple, Primate Punch, Sniper, DK, Baboon Blast"
+kong = "Chunky"
+
+[node name="Chunky2" parent="TabContainer/Creepy Castle/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 178.73
+margin_top = 401.25
+margin_right = 178.73
+margin_bottom = 401.25
+hint_tooltip = "Crypt Coffins
+
+Pineapple, Primate Punch"
+kong = "Chunky"
+
+[node name="Chunky3" parent="TabContainer/Creepy Castle/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 90.7301
+margin_top = 417.25
+margin_right = 90.7301
+margin_bottom = 417.25
+hint_tooltip = "Greenhouse Shack
+
+Primate Punch, Gorilla Gone, Triangle"
+kong = "Chunky"
+
+[node name="Chunky4" parent="TabContainer/Creepy Castle/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 562.73
+margin_top = 553.25
+margin_right = 562.73
+margin_bottom = 553.25
+hint_tooltip = "Museum
+
+Super Duper Slam, Primate Puch, Barrel Throw"
+kong = "Chunky"
+
+[node name="Chunky5" parent="TabContainer/Creepy Castle/Chunky" instance=ExtResource( 1 )]
+process_priority = 1
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 298.73
+margin_top = 33.25
+margin_right = 298.73
+margin_bottom = 33.25
+hint_tooltip = "Banana Medal"
+kong = "Chunky"
+
+[node name="Other" type="Control" parent="TabContainer/Creepy Castle"]
+
+[node name="BattlePad1" parent="TabContainer/Creepy Castle/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
+material = SubResource( 2 )
+margin_left = 4.0
+margin_top = 488.0
+margin_right = 4.0
+margin_bottom = 488.0
+hint_tooltip = "Greenhouse - Lanky Maze
+
+Lanky, Super Duper Slam"
+kong = "Battlepad"
+
+[node name="Boss" parent="TabContainer/Creepy Castle/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
+material = SubResource( 2 )
+margin_left = 4.0
+margin_right = 4.0
+hint_tooltip = "Boss Battle"
+kong = "Boss"
+
+[node name="Kasplat" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Kasplat1" parent="TabContainer/Creepy Castle/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 482.73
+margin_top = 825.25
+margin_right = 482.73
+margin_bottom = 825.25
+hint_tooltip = "Tree - DK
+
+DK, Coconut, Baboon Blast"
+kong = "Kasplat"
+
+[node name="Kasplat2" parent="TabContainer/Creepy Castle/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 434.73
+margin_top = 329.25
+margin_right = 434.73
+margin_bottom = 329.25
+hint_tooltip = "Crypt"
+kong = "Kasplat"
+
+[node name="Kasplat3" parent="TabContainer/Creepy Castle/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 770.73
+margin_top = 633.25
+margin_right = 770.73
+margin_bottom = 633.25
+hint_tooltip = "Outside past Drawbridge"
+kong = "Kasplat"
+
+[node name="Kasplat4" parent="TabContainer/Creepy Castle/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 762.73
+margin_top = 785.25
+margin_right = 762.73
+margin_bottom = 785.25
+hint_tooltip = "Outermost Ledges of Castle"
+kong = "Kasplat"
+
+[node name="Kasplat5" parent="TabContainer/Creepy Castle/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 978.73
+margin_top = 433.25
+margin_right = 978.73
+margin_bottom = 433.25
+hint_tooltip = "Dungeon"
+kong = "Kasplat"
+
+[node name="Entrance" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 676.0
+margin_top = 864.0
+margin_right = 676.0
+margin_bottom = 864.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Creepy Castle/Entrance"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Creepy Castle/Entrance"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Entrance"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Top of Castle" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 332.0
+margin_top = 632.0
+margin_right = 332.0
+margin_bottom = 632.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Creepy Castle/Top of Castle"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Creepy Castle/Top of Castle"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Top of Castle"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Ballroom" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 60.0
+margin_top = 776.0
+margin_right = 60.0
+margin_bottom = 776.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Creepy Castle/Ballroom"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Creepy Castle/Ballroom"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Ballroom"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Crypt" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 356.0
+margin_top = 320.0
+margin_right = 356.0
+margin_bottom = 320.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Creepy Castle/Crypt"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Creepy Castle/Crypt"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Crypt"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Dungeon" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 1100.0
+margin_top = 424.0
+margin_right = 1100.0
+margin_bottom = 424.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Creepy Castle/Dungeon"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Creepy Castle/Dungeon"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Dungeon"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Tree" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 468.0
+margin_top = 752.0
+margin_right = 468.0
+margin_bottom = 752.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Creepy Castle/Tree"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Creepy Castle/Tree"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Tree"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Greenhouse" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 60.0
+margin_top = 344.0
+margin_right = 60.0
+margin_bottom = 344.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Creepy Castle/Greenhouse"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Creepy Castle/Greenhouse"]
+margin_left = -40.0
+margin_top = -32.0
+margin_right = 40.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Greenhouse"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_BM" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 116.0
+margin_top = 32.0
+margin_right = 116.0
+margin_bottom = 40.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Creepy Castle/HUD_BM"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Creepy Castle/HUD_BM"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Banana Medals"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Cranky" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 420.0
+margin_top = 32.0
+margin_right = 420.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Creepy Castle/HUD_Cranky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Creepy Castle/HUD_Cranky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Cranky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Funky" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 724.0
+margin_top = 32.0
+margin_right = 724.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Creepy Castle/HUD_Funky"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Creepy Castle/HUD_Funky"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Funky"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="HUD_Candy" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 1028.0
+margin_top = 32.0
+margin_right = 1028.0
+margin_bottom = 32.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/Creepy Castle/HUD_Candy"]
+position = Vector2( -32, 0 )
+scale = Vector2( 0.941176, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/Creepy Castle/HUD_Candy"]
+margin_left = -64.0
+margin_top = -32.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Candy"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Cranky" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 116.0
+margin_right = 116.0
+
+[node name="DK6" parent="TabContainer/Creepy Castle/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Creepy Castle/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Creepy Castle/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Creepy Castle/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Creepy Castle/Cranky" instance=ExtResource( 1 )]
+modulate = Color( 0.352941, 1, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Cranky" parent="TabContainer/Creepy Castle/Cranky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 744.0
+margin_top = 632.0
+margin_right = 744.0
+margin_bottom = 632.0
+hint_tooltip = "Storage Room"
+shop = "Cranky"
+
+[node name="Funky" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 420.0
+margin_right = 420.0
+margin_bottom = 8.0
+
+[node name="DK6" parent="TabContainer/Creepy Castle/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Creepy Castle/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Creepy Castle/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Creepy Castle/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Creepy Castle/Funky" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.843137, 0.14902, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Funky" parent="TabContainer/Creepy Castle/Funky" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 112.0
+margin_top = 104.0
+margin_right = 112.0
+margin_bottom = 104.0
+hint_tooltip = "Testing Room"
+shop = "Funky"
+
+[node name="Candy" type="Control" parent="TabContainer/Creepy Castle"]
+margin_left = 724.0
+margin_right = 724.0
+
+[node name="DK6" parent="TabContainer/Creepy Castle/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 308.0
+margin_right = 308.0
+hint_tooltip = ""
+
+[node name="Diddy6" parent="TabContainer/Creepy Castle/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 356.0
+margin_right = 356.0
+hint_tooltip = ""
+kong = "Diddy"
+
+[node name="Lanky6" parent="TabContainer/Creepy Castle/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 404.0
+margin_right = 404.0
+hint_tooltip = ""
+kong = "Lanky"
+
+[node name="Tiny6" parent="TabContainer/Creepy Castle/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 452.0
+margin_right = 452.0
+hint_tooltip = ""
+kong = "Tiny"
+
+[node name="Chunky6" parent="TabContainer/Creepy Castle/Candy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0.407843, 0.870588, 1 )
+material = SubResource( 2 )
+margin_left = 500.0
+margin_right = 500.0
+hint_tooltip = ""
+kong = "Chunky"
+
+[node name="Candy" parent="TabContainer/Creepy Castle/Candy" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 480.0
+margin_top = 600.0
+margin_right = 480.0
+margin_bottom = 600.0
+hint_tooltip = "Left after Pole behind Gate"
+shop = "Candy"
+
+[node name="Snide" type="Control" parent="TabContainer/Creepy Castle"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Snide" parent="TabContainer/Creepy Castle/Snide" instance=ExtResource( 6 )]
+material = SubResource( 5 )
+margin_left = 708.0
+margin_top = 648.0
+margin_right = 708.0
+margin_bottom = 648.0
+hint_tooltip = "Storage Room"
+shop = "Snide"

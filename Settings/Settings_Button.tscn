@@ -1,0 +1,11 @@
+[gd_scene format=2]
+
+[node name="Settings" type="CheckButton"]
+margin_right = 76.0
+margin_bottom = 40.0
+hint_tooltip = "OFF : None
+
+ON: Isles Only"
+text = "Activate Bananaports"
+
+[connection signal="pressed" from="." to="." method="_on_JJ_Button_pressed"]

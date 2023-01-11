@@ -1,0 +1,130 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://black_trans.tres" type="Material" id=1]
+[ext_resource path="res://sprites/images/unchecked.bmp" type="Texture" id=2]
+[ext_resource path="res://Logic/Level_Check_Button.gd" type="Script" id=4]
+[ext_resource path="res://Logic/Check_Dropdown.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Logic/Indicator.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Logic/Indicator.gd" type="Script" id=7]
+[ext_resource path="res://OpenSans-Regular.ttf" type="DynamicFontData" id=8]
+[ext_resource path="res://sprites/images/indicator.png" type="Texture" id=9]
+[ext_resource path="res://Logic/Label.gd" type="Script" id=10]
+
+[sub_resource type="DynamicFont" id=6]
+size = 32
+font_data = ExtResource( 8 )
+
+[sub_resource type="Theme" id=5]
+TooltipLabel/fonts/font = SubResource( 6 )
+
+[sub_resource type="Shader" id=1]
+resource_local_to_scene = true
+code = "shader_type canvas_item;
+
+//void fragment(){
+//	COLOR = texture(TEXTURE, UV);
+//	float lumi = (COLOR.r +COLOR.g+COLOR.b) / 3.0;
+//	COLOR.rgb = vec3(lumi);
+//}
+
+uniform bool clicked=false;
+
+void fragment(){
+vec4 col = texture(TEXTURE,UV).rgba;
+if (col.r==0.0/255.0 && col.g==0.0/255.0 && col.b==0.0/255.0) {
+    col.a=0.0;
+}
+COLOR=col;
+if (clicked){
+	float lumi = (COLOR.r +COLOR.g+COLOR.b) / 3.0;
+	COLOR.rgb = vec3(lumi);
+	}
+}
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+shader = SubResource( 1 )
+shader_param/clicked = false
+
+[sub_resource type="Shader" id=3]
+resource_local_to_scene = true
+code = "shader_type canvas_item;
+
+//void fragment(){
+//	COLOR = texture(TEXTURE, UV);
+//	float lumi = (COLOR.r +COLOR.g+COLOR.b) / 3.0;
+//	COLOR.rgb = vec3(lumi);
+//}
+
+uniform bool clicked=false;
+
+void fragment(){
+vec4 col = texture(TEXTURE,UV).rgba;
+if (col.r==63.0/255.0 && col.g==72.0/255.0 && col.b==204.0/255.0) {
+    col.a=0.0;
+}
+COLOR=col;
+if (clicked){
+	float lumi = (COLOR.r +COLOR.g+COLOR.b) / 3.0;
+	COLOR.rgb = vec3(lumi);
+	}
+}
+"
+
+[sub_resource type="ShaderMaterial" id=4]
+resource_local_to_scene = true
+shader = SubResource( 3 )
+shader_param/clicked = false
+
+[sub_resource type="DynamicFont" id=7]
+size = 9
+outline_color = Color( 0, 0, 0, 1 )
+font_data = ExtResource( 8 )
+
+[sub_resource type="Theme" id=8]
+default_font = SubResource( 7 )
+Label/colors/font_color = Color( 0, 0, 0, 1 )
+
+[node name="Shop_Check_Button" type="TextureButton"]
+material = ExtResource( 1 )
+margin_left = 130.0
+margin_right = 198.0
+margin_bottom = 68.0
+theme = SubResource( 5 )
+toggle_mode = true
+button_mask = 3
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+script = ExtResource( 4 )
+
+[node name="Dropdown" parent="." instance=ExtResource( 5 )]
+material = SubResource( 2 )
+margin_left = -129.0
+margin_right = -49.0
+clip_text = true
+
+[node name="Indicator" parent="." instance=ExtResource( 6 )]
+show_behind_parent = true
+material = SubResource( 4 )
+position = Vector2( 34, 34 )
+scale = Vector2( 1.05882, 1.05882 )
+texture = ExtResource( 9 )
+script = ExtResource( 7 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 66.0
+margin_bottom = 66.0
+theme = SubResource( 8 )
+align = 1
+valign = 1
+autowrap = true
+uppercase = true
+script = ExtResource( 10 )
+
+[connection signal="focus_entered" from="." to="." method="_on_Shop_Check_Button_focus_entered"]
+[connection signal="gui_input" from="." to="." method="_on_Shop_Check_Button_gui_input"]
+[connection signal="pressed" from="." to="." method="_on_Shop_Check_Button_pressed"]
+[connection signal="pressed" from="." to="." method="_on_TextureButton_pressed"]
