@@ -1,12 +1,12 @@
 [gd_scene load_steps=18 format=2]
 
-[ext_resource path="res://black_trans.tres" type="Material" id=1]
+[ext_resource path="res://new folder/black_trans.tres" type="Material" id=1]
 [ext_resource path="res://sprites/images/unchecked.bmp" type="Texture" id=2]
 [ext_resource path="res://Logic/Level_Check_Button.gd" type="Script" id=4]
 [ext_resource path="res://Logic/Check_Dropdown.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Logic/Indicator.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Logic/Indicator.gd" type="Script" id=7]
-[ext_resource path="res://OpenSans-Regular.ttf" type="DynamicFontData" id=8]
+[ext_resource path="res://new folder/OpenSans-Regular.ttf" type="DynamicFontData" id=8]
 [ext_resource path="res://sprites/images/indicator.png" type="Texture" id=9]
 [ext_resource path="res://Logic/Label.gd" type="Script" id=10]
 

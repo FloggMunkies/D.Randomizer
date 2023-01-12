@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://black_trans.tres" type="Material" id=1]
+[ext_resource path="res://new folder/black_trans.tres" type="Material" id=1]
 [ext_resource path="res://Logic/Check_Dropdown.gd" type="Script" id=3]
 
 [node name="Dropdown" type="OptionButton"]

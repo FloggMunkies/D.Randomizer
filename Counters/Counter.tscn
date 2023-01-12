@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://black_trans.tres" type="Material" id=1]
+[ext_resource path="res://new folder/black_trans.tres" type="Material" id=1]
 [ext_resource path="res://Counters/Counter.gd" type="Script" id=2]
 [ext_resource path="res://sprites/images/Golden_Banana_Icon.bmp" type="Texture" id=3]
 

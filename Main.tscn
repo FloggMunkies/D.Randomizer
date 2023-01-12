@@ -1,6 +1,6 @@
-[gd_scene load_steps=147 format=2]
+[gd_scene load_steps=146 format=2]
 
-[ext_resource path="res://Logic.tscn" type="PackedScene" id=1]
+[ext_resource path="res://new folder/Logic.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Characters/Tiny_Button.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Characters/DK_Button.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Characters/Lanky_Button.tscn" type="PackedScene" id=4]
@@ -37,7 +37,6 @@
 [ext_resource path="res://Extra Moves/Swim_Button.tscn" type="PackedScene" id=35]
 [ext_resource path="res://Extra Moves/Vine_Button.tscn" type="PackedScene" id=36]
 [ext_resource path="res://Extra Moves/Barrel_Throw_Button.tscn" type="PackedScene" id=37]
-[ext_resource path="res://Levels/Jungle_Japes_Button.tscn" type="PackedScene" id=38]
 [ext_resource path="res://Settings/Settings_Button.tscn" type="PackedScene" id=39]
 [ext_resource path="res://Extra Moves/Orange.tscn" type="PackedScene" id=40]
 [ext_resource path="res://Maps/Maps.tscn" type="PackedScene" id=41]
@@ -48,9 +47,9 @@
 [ext_resource path="res://Misc Flags/Key_2.tscn" type="PackedScene" id=46]
 [ext_resource path="res://Misc Flags/Key_6.tscn" type="PackedScene" id=47]
 [ext_resource path="res://Misc Flags/Key_7.tscn" type="PackedScene" id=48]
-[ext_resource path="res://Button.gd" type="Script" id=49]
+[ext_resource path="res://new folder/Button.gd" type="Script" id=49]
 [ext_resource path="res://Levels/Japes.tscn" type="PackedScene" id=50]
-[ext_resource path="res://new_theme.tres" type="Theme" id=51]
+[ext_resource path="res://new folder/new_theme.tres" type="Theme" id=51]
 [ext_resource path="res://Shops/Cranky_Shop.tscn" type="PackedScene" id=52]
 [ext_resource path="res://Shops/Shop_Check_Button.tscn" type="PackedScene" id=53]
 [ext_resource path="res://Levels/Level_Lobby_Button.tscn" type="PackedScene" id=54]
@@ -1706,138 +1705,58 @@ margin_bottom = 384.0
 
 [node name="Levels" type="Control" parent="TabContainer/Logic/Logic"]
 
-[node name="JJ_Button" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 38 )]
-margin_left = 504.0
-margin_right = 580.0
-
-[node name="Label" parent="TabContainer/Logic/Logic/Levels/JJ_Button" index="0"]
-margin_left = -104.0
-margin_right = -16.0
-
-[node name="AA_Button" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 38 )]
-modulate = Color( 1, 1, 0, 1 )
-margin_left = 504.0
-margin_top = 32.0
-margin_right = 580.0
-margin_bottom = 72.0
-
-[node name="Label" parent="TabContainer/Logic/Logic/Levels/AA_Button" index="0"]
-margin_left = -104.0
-margin_right = -16.0
-text = "Angry Aztec"
-
-[node name="Factory_Button" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 38 )]
-modulate = Color( 1, 1, 1, 1 )
-margin_left = 504.0
-margin_top = 64.0
-margin_right = 580.0
-margin_bottom = 104.0
-
-[node name="Label" parent="TabContainer/Logic/Logic/Levels/Factory_Button" index="0"]
-margin_left = -104.0
-margin_right = -11.0
-text = "Frantic Factory"
-
-[node name="GG_Button" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 38 )]
-modulate = Color( 1, 0.458824, 0, 1 )
-margin_left = 504.0
-margin_top = 96.0
-margin_right = 580.0
-margin_bottom = 136.0
-
-[node name="Label" parent="TabContainer/Logic/Logic/Levels/GG_Button" index="0"]
-margin_left = -104.0
-margin_right = 7.0
-text = "Gloomy Galleon"
-
-[node name="Forest_Button" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 38 )]
-modulate = Color( 0.494118, 0.858824, 0, 1 )
-margin_left = 504.0
-margin_top = 128.0
-margin_right = 580.0
-margin_bottom = 168.0
-
-[node name="Label" parent="TabContainer/Logic/Logic/Levels/Forest_Button" index="0"]
-margin_left = -104.0
-margin_right = -16.0
-text = "Fungi Forest"
-
-[node name="Caves_Button" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 38 )]
-modulate = Color( 0, 1, 1, 1 )
-margin_left = 504.0
-margin_top = 160.0
-margin_right = 580.0
-margin_bottom = 200.0
-
-[node name="Label" parent="TabContainer/Logic/Logic/Levels/Caves_Button" index="0"]
-margin_left = -104.0
-margin_right = -16.0
-text = "Crystal Caves"
-
-[node name="Castle_Button" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 38 )]
-modulate = Color( 1, 0.235294, 0.235294, 1 )
-margin_left = 504.0
-margin_top = 192.0
-margin_right = 580.0
-margin_bottom = 232.0
-
-[node name="Label" parent="TabContainer/Logic/Logic/Levels/Castle_Button" index="0"]
-margin_left = -104.0
-margin_right = -16.0
-text = "Creepy Castle"
-
 [node name="Japes_Button" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 54 )]
-margin_left = 588.0
+margin_left = 404.0
 margin_top = 8.0
-margin_right = 828.0
+margin_right = 644.0
 margin_bottom = 48.0
 level = "japes"
 
 [node name="Aztec_Button" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 54 )]
-margin_left = 588.0
+margin_left = 404.0
 margin_top = 56.0
-margin_right = 828.0
+margin_right = 644.0
 margin_bottom = 96.0
 text = "Angry Aztec:"
 level = "aztec"
 
 [node name="Factory_Button2" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 54 )]
-margin_left = 588.0
-margin_top = 96.0
-margin_right = 828.0
-margin_bottom = 136.0
+margin_left = 404.0
+margin_top = 104.0
+margin_right = 644.0
+margin_bottom = 144.0
 text = "Frantic Factory:"
 level = "factory"
 
 [node name="Galleon_Button" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 54 )]
-margin_left = 588.0
-margin_top = 136.0
-margin_right = 828.0
-margin_bottom = 176.0
+margin_left = 404.0
+margin_top = 152.0
+margin_right = 644.0
+margin_bottom = 192.0
 text = "Gloomy Galleon:"
 level = "galleon"
 
 [node name="Galleon_Button2" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 54 )]
-margin_left = 588.0
-margin_top = 176.0
-margin_right = 828.0
-margin_bottom = 216.0
+margin_left = 404.0
+margin_top = 200.0
+margin_right = 644.0
+margin_bottom = 240.0
 text = "Fungi Forest:"
 level = "forest"
 
 [node name="Galleon_Button3" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 54 )]
-margin_left = 588.0
-margin_top = 216.0
-margin_right = 828.0
-margin_bottom = 256.0
+margin_left = 404.0
+margin_top = 248.0
+margin_right = 644.0
+margin_bottom = 288.0
 text = "Crystal Caves:"
 level = "caves"
 
 [node name="Galleon_Button4" parent="TabContainer/Logic/Logic/Levels" instance=ExtResource( 54 )]
-margin_left = 588.0
-margin_top = 256.0
-margin_right = 828.0
-margin_bottom = 296.0
+margin_left = 404.0
+margin_top = 296.0
+margin_right = 644.0
+margin_bottom = 336.0
 text = "Creepy Castle:"
 level = "castle"
 
@@ -4429,13 +4348,6 @@ margin_bottom = -4.0
 [connection signal="pressed" from="TabContainer/Logic/Logic/Extra_Moves/Super_Duper_Slam_Button" to="TabContainer/Logic/Logic" method="_on_Super_Duper_Slam_Button_pressed"]
 [connection signal="pressed" from="TabContainer/Logic/Logic/Extra_Moves/Barrel_Throw_Button" to="TabContainer/Logic/Logic" method="_on_Barrel_Throw_Button_pressed"]
 [connection signal="pressed" from="TabContainer/Logic/Logic/Extra_Moves/Orange_Button" to="TabContainer/Logic/Logic" method="_on_Orange_Button_pressed"]
-[connection signal="pressed" from="TabContainer/Logic/Logic/Levels/JJ_Button" to="TabContainer/Logic/Logic" method="_on_JJ_Button_pressed"]
-[connection signal="pressed" from="TabContainer/Logic/Logic/Levels/AA_Button" to="TabContainer/Logic/Logic" method="_on_AA_Button_pressed"]
-[connection signal="pressed" from="TabContainer/Logic/Logic/Levels/Factory_Button" to="TabContainer/Logic/Logic" method="_on_Factory_Button_pressed"]
-[connection signal="pressed" from="TabContainer/Logic/Logic/Levels/GG_Button" to="TabContainer/Logic/Logic" method="_on_GG_Button_pressed"]
-[connection signal="pressed" from="TabContainer/Logic/Logic/Levels/Forest_Button" to="TabContainer/Logic/Logic" method="_on_Forest_Button_pressed"]
-[connection signal="pressed" from="TabContainer/Logic/Logic/Levels/Caves_Button" to="TabContainer/Logic/Logic" method="_on_Caves_Button_pressed"]
-[connection signal="pressed" from="TabContainer/Logic/Logic/Levels/Castle_Button" to="TabContainer/Logic/Logic" method="_on_Castle_Button_pressed"]
 [connection signal="pressed" from="TabContainer/Logic/Logic/Misc Flags/Japes_Kong_Button" to="TabContainer/Logic/Logic" method="_on_Japes_Kong_Button_pressed"]
 [connection signal="pressed" from="TabContainer/Logic/Logic/Misc Flags/Key_2_Button" to="TabContainer/Logic/Logic" method="_on_Key_2_Button_pressed"]
 [connection signal="pressed" from="TabContainer/Logic/Logic/Misc Flags/Key_6_Button" to="TabContainer/Logic/Logic" method="_on_Key_6_Button_pressed"]
@@ -4450,13 +4362,6 @@ margin_bottom = -4.0
 [connection signal="pressed" from="TabContainer/Logic/Logic/Settings/Levels" to="TabContainer/Logic/Logic" method="_on_Levels_pressed"]
 [connection signal="pressed" from="TabContainer/Logic/Logic/Settings/High Requirments" to="TabContainer/Logic/Logic" method="_on_High_Requirments_pressed"]
 
-[editable path="TabContainer/Logic/Logic/Levels/JJ_Button"]
-[editable path="TabContainer/Logic/Logic/Levels/AA_Button"]
-[editable path="TabContainer/Logic/Logic/Levels/Factory_Button"]
-[editable path="TabContainer/Logic/Logic/Levels/GG_Button"]
-[editable path="TabContainer/Logic/Logic/Levels/Forest_Button"]
-[editable path="TabContainer/Logic/Logic/Levels/Caves_Button"]
-[editable path="TabContainer/Logic/Logic/Levels/Castle_Button"]
 [editable path="TabContainer/Logic/Logic/Old/TabContainer/Isles/Isles"]
 [editable path="TabContainer/Logic/Logic/Old/TabContainer/Japes/Japes"]
 [editable path="TabContainer/Logic/Logic/Old/TabContainer/Aztec/Aztec"]
