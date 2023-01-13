@@ -4,6 +4,7 @@ extends Control
 var pressed = false
 var available = false
 export var kong = "DK"
+export var zone = ""
 var _a = .3
 
 

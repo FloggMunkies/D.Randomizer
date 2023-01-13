@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://Maps/New_Map_Button.tscn" type="PackedScene" id=1]
 [ext_resource path="res://sprites/DK Isles.bmp" type="Texture" id=2]
@@ -13,6 +13,10 @@
 [ext_resource path="res://sprites/Fungi Forest.bmp" type="Texture" id=11]
 [ext_resource path="res://sprites/Crystal Caves.bmp" type="Texture" id=12]
 [ext_resource path="res://sprites/Creepy Castle.bmp" type="Texture" id=13]
+[ext_resource path="res://sprites/dk64_maps/maps/Isles/DK Isles.png" type="Texture" id=14]
+[ext_resource path="res://Zones.tscn" type="PackedScene" id=15]
+[ext_resource path="res://Maps/Map_Sprite.gd" type="Script" id=16]
+[ext_resource path="res://Zone_Button.tscn" type="PackedScene" id=17]
 
 [sub_resource type="Shader" id=1]
 resource_local_to_scene = true
@@ -186,7 +190,8 @@ margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
 
-[node name="DK Isles Sprite" type="Sprite" parent="TabContainer/DK Isles"]
+[node name="old" type="Sprite" parent="TabContainer/DK Isles"]
+visible = false
 modulate = Color( 0.831373, 0.831373, 0.831373, 1 )
 position = Vector2( 636, 480 )
 scale = Vector2( 2.83987, 2.85333 )
@@ -194,402 +199,168 @@ texture = ExtResource( 2 )
 region_enabled = true
 region_rect = Rect2( 50, 25, 450, 300 )
 
-[node name="DK" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 9.2699
-margin_top = -1.25
-margin_right = 9.2699
-margin_bottom = -1.25
+[node name="Sprite" type="Sprite" parent="TabContainer/DK Isles"]
+position = Vector2( 836, 448 )
+scale = Vector2( 1.26857, 1.26857 )
+texture = ExtResource( 14 )
+region_enabled = true
+region_rect = Rect2( 112, 64, 700, 720 )
+script = ExtResource( 16 )
 
-[node name="DK1" parent="TabContainer/DK Isles/DK" instance=ExtResource( 1 )]
-material = SubResource( 2 )
-margin_left = 522.73
-margin_top = 289.25
-margin_right = 522.73
-margin_bottom = 289.25
-hint_tooltip = "Free GB"
+[node name="DK Isle" type="Polygon2D" parent="TabContainer/DK Isles/Sprite"]
+color = Color( 1, 1, 0, 0.490196 )
+polygon = PoolVector2Array( -25.2252, 25.2253, 56.7567, 31.5315, 195.495, -37.8378, 214.414, -100.901, 157.658, -271.171, 63.063, -309.009, -25.2252, -309.009, -296.396, -201.802, -340.541, 37.8379, -264.865, 69.3694 )
 
-[node name="DK2" parent="TabContainer/DK Isles/DK" instance=ExtResource( 1 )]
-material = SubResource( 4 )
-margin_left = 1042.73
-margin_top = 401.25
-margin_right = 1042.73
-margin_bottom = 401.25
-hint_tooltip = "Snide Gun Switch
+[node name="Krem Isle" type="Polygon2D" parent="TabContainer/DK Isles/Sprite"]
+color = Color( 1, 1, 0, 0.490196 )
+polygon = PoolVector2Array( -37.8378, 50.4505, 239.64, 50.4505, 239.64, 245.946, -6.3064, 353.153, -138.739, 353.153, -157.658, 214.414, -119.82, 138.739 )
 
-Coconut,"
-
-[node name="DK3" parent="TabContainer/DK Isles/DK" instance=ExtResource( 1 )]
-material = SubResource( 4 )
-margin_left = 866.73
-margin_top = 305.25
-margin_right = 866.73
-margin_bottom = 305.25
-hint_tooltip = "Factory Lobby
-
-Gorilla Grab, Bongo Blast"
-
-[node name="DK4" parent="TabContainer/DK Isles/DK" instance=ExtResource( 1 )]
-material = SubResource( 4 )
-margin_left = 450.73
-margin_top = 553.25
-margin_right = 450.73
-margin_bottom = 553.25
-hint_tooltip = "Caves Lobby Ice Wall
-
-Barrel Throw, Chunky, Primate Punch, Strong Kong"
-
-[node name="Diddy" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 9.2699
-margin_top = -1.25
-margin_right = 9.2699
-margin_bottom = -1.25
-
-[node name="Diddy1" parent="TabContainer/DK Isles/Diddy" instance=ExtResource( 1 )]
-modulate = Color( 1, 0, 0, 1 )
-material = SubResource( 2 )
-margin_left = 410.73
-margin_top = 425.25
-margin_right = 410.73
-margin_bottom = 425.25
-hint_tooltip = "Top of Isle
-
-Rocketbarrel, Lanky Music, Chunky, Barrel Throw"
-kong = "Diddy"
-
-[node name="Diddy2" parent="TabContainer/DK Isles/Diddy" instance=ExtResource( 1 )]
-modulate = Color( 1, 0, 0, 1 )
-material = SubResource( 2 )
-margin_left = 362.73
-margin_top = 425.25
-margin_right = 362.73
-margin_bottom = 425.25
-hint_tooltip = "Top of Isle Gun Switch
-
-Rocketbarrel, Peanuts, Lanky Music, Chunky, Barrel Throw"
-kong = "Diddy"
-
-[node name="Diddy3" parent="TabContainer/DK Isles/Diddy" instance=ExtResource( 1 )]
-modulate = Color( 1, 0, 0, 1 )
-material = SubResource( 2 )
-margin_left = 1138.73
-margin_top = 401.25
-margin_right = 1138.73
-margin_bottom = 401.25
-hint_tooltip = "Snide Diddy Pad
-
-Simian Spring"
-kong = "Diddy"
-
-[node name="Diddy4" parent="TabContainer/DK Isles/Diddy" instance=ExtResource( 1 )]
-modulate = Color( 1, 0, 0, 1 )
-material = SubResource( 2 )
-margin_left = 402.73
-margin_top = 553.25
-margin_right = 402.73
-margin_bottom = 553.25
-hint_tooltip = "Caves Lobby Music Pad
-
-Rocketbarrel, Guitar"
-kong = "Diddy"
-
-[node name="Lanky" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 9.2699
-margin_top = -1.25
-margin_right = 9.2699
-margin_bottom = -1.25
-
-[node name="Lanky1" parent="TabContainer/DK Isles/Lanky" instance=ExtResource( 1 )]
-modulate = Color( 0, 1, 1, 1 )
-material = SubResource( 2 )
-margin_left = 570.73
-margin_top = 289.25
-margin_right = 570.73
-margin_bottom = 289.25
-hint_tooltip = "Japes Lobby Boulder Music Pad
-
-Barrel Throw, Trombone"
-kong = "Lanky"
-
-[node name="Lanky2" parent="TabContainer/DK Isles/Lanky" instance=ExtResource( 1 )]
-modulate = Color( 0, 1, 1, 1 )
-material = SubResource( 2 )
-margin_left = 778.73
-margin_top = 113.25
-margin_right = 778.73
-margin_bottom = 113.25
-hint_tooltip = "K Lumsy Gun Switch
-
-Grape"
-kong = "Lanky"
-
-[node name="Lanky3" parent="TabContainer/DK Isles/Lanky" instance=ExtResource( 1 )]
-modulate = Color( 0, 1, 1, 1 )
-material = SubResource( 2 )
-margin_left = 826.73
-margin_top = 113.25
-margin_right = 826.73
-margin_bottom = 113.25
-hint_tooltip = "K Lumsy Barrel
-
-Orangestand Sprint"
-kong = "Lanky"
-
-[node name="Lanky4" parent="TabContainer/DK Isles/Lanky" instance=ExtResource( 1 )]
-modulate = Color( 0, 1, 1, 1 )
-material = SubResource( 2 )
-margin_left = 946.73
-margin_top = 113.25
-margin_right = 946.73
-margin_bottom = 113.25
-hint_tooltip = "Castle Lobby Boulder Pad
-
-Baboon Balloon, Barrel Throw"
-kong = "Lanky"
-
-[node name="Tiny" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 9.2699
-margin_top = -1.25
-margin_right = 9.2699
-margin_bottom = -1.25
-
-[node name="Tiny1" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
-modulate = Color( 1, 0, 1, 1 )
-material = SubResource( 2 )
-margin_left = 746.73
-margin_top = 681.25
-margin_right = 746.73
-margin_bottom = 681.25
-hint_tooltip = "Fairy Island Gun Switch
-
-Feather"
-kong = "Tiny"
-
-[node name="Tiny2" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
-modulate = Color( 1, 0, 1, 1 )
-material = SubResource( 2 )
-margin_left = 434.73
-margin_top = 177.25
-margin_right = 434.73
-margin_bottom = 177.25
-hint_tooltip = "Aztec Lobby Gongs
-
-Chimpy Charge, Ponytail Twirl"
-kong = "Tiny"
-
-[node name="Tiny3" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
-modulate = Color( 1, 0, 1, 1 )
-material = SubResource( 2 )
-margin_left = 1018.73
-margin_top = 665.25
-margin_right = 1018.73
-margin_bottom = 665.25
-hint_tooltip = "Galleon Lobby Super Switch
-
-Super Simian Slam, Mini Monkey, Dive, Chunky"
-kong = "Tiny"
-
-[node name="Tiny4" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
-modulate = Color( 1, 0, 1, 1 )
-material = SubResource( 2 )
-margin_left = 1042.73
-margin_top = 473.25
-margin_right = 1042.73
-margin_bottom = 473.25
-hint_tooltip = "Monkeyport Music Pad
-
-Monkeyport, Saxaphone"
-kong = "Tiny"
-
-[node name="Tiny5" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
-modulate = Color( 1, 0, 1, 1 )
-material = SubResource( 2 )
-margin_left = 794.73
-margin_top = 681.25
-margin_right = 794.73
-margin_bottom = 681.25
-hint_tooltip = "Banana Fairy Reward
-
-20 Fairies"
-kong = "Tiny"
-
-[node name="Chunky" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 9.2699
-margin_top = -1.25
-margin_right = 9.2699
-margin_bottom = -1.25
-
-[node name="Chunky1" parent="TabContainer/DK Isles/Chunky" instance=ExtResource( 1 )]
-modulate = Color( 0, 1, 0, 1 )
-material = SubResource( 2 )
-margin_left = 242.73
-margin_top = 513.25
-margin_right = 242.73
-margin_bottom = 513.25
-hint_tooltip = "Gun Switch
-
-Pineapple"
-kong = "Chunky"
-
-[node name="Chunky2" parent="TabContainer/DK Isles/Chunky" instance=ExtResource( 1 )]
-modulate = Color( 0, 1, 0, 1 )
-material = SubResource( 2 )
-margin_left = 570.73
-margin_top = 417.25
-margin_right = 570.73
-margin_bottom = 417.25
-hint_tooltip = "Boulder Music Pad
-
-Barrel Throw, Triangle"
-kong = "Chunky"
-
-[node name="Chunky3" parent="TabContainer/DK Isles/Chunky" instance=ExtResource( 1 )]
-modulate = Color( 0, 1, 0, 1 )
-material = SubResource( 2 )
-margin_left = 466.73
-margin_top = 849.25
-margin_right = 466.73
-margin_bottom = 849.25
-hint_tooltip = "Giant Rock
-
-Monkeyport, Saxaphone, Hunky Chunky"
-kong = "Chunky"
-
-[node name="Chunky4" parent="TabContainer/DK Isles/Chunky" instance=ExtResource( 1 )]
-modulate = Color( 0, 1, 0, 1 )
-material = SubResource( 2 )
-margin_left = 866.73
-margin_top = 457.25
-margin_right = 866.73
-margin_bottom = 457.25
-hint_tooltip = "Helm Lobby Pad
-
-Gorilla Gone"
-kong = "Chunky"
-
-[node name="Kasplat" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 9.2699
-margin_top = -1.25
-margin_right = 9.2699
-margin_bottom = -1.25
-
-[node name="Kasplat1" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
-modulate = Color( 0, 0, 1, 1 )
-material = SubResource( 2 )
-margin_left = 818.73
-margin_top = 457.25
-margin_right = 818.73
-margin_bottom = 457.25
-hint_tooltip = "Helm Lobby Kasplat"
-kong = "Kasplat"
-
-[node name="Kasplat2" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
-modulate = Color( 0, 0, 1, 1 )
-material = SubResource( 2 )
-margin_left = 994.73
-margin_top = 113.25
-margin_right = 994.73
-margin_bottom = 113.25
-hint_tooltip = "Castle Lobby Kasplat
-
-Coconut"
-kong = "Kasplat"
-
-[node name="Kasplat3" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
-modulate = Color( 0, 0, 1, 1 )
-material = SubResource( 2 )
-margin_left = 498.73
-margin_top = 553.25
-margin_right = 498.73
-margin_bottom = 553.25
-hint_tooltip = "Caves Lobby Kasplat
-
-Primate Punch"
-kong = "Kasplat"
-
-[node name="Kasplat4" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
-modulate = Color( 0, 0, 1, 1 )
-material = SubResource( 2 )
-margin_left = 866.73
-margin_top = 377.25
-margin_right = 866.73
-margin_bottom = 377.25
-hint_tooltip = "Factory Lobby Kasplat
-
-Primate Punch"
-kong = "Kasplat"
-
-[node name="Kasplat5" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
-modulate = Color( 0, 0, 1, 1 )
-material = SubResource( 2 )
-margin_left = 970.73
-margin_top = 665.25
-margin_right = 970.73
-margin_bottom = 665.25
-hint_tooltip = "Galleon Lobby Kasplat"
-kong = "Kasplat"
+[node name="Level Lobbies" type="Polygon2D" parent="TabContainer/DK Isles/Sprite"]
+position = Vector2( 40.991, -1.52588e-05 )
+scale = Vector2( 1.0625, 1 )
+color = Color( 1, 1, 0, 0.490196 )
+polygon = PoolVector2Array( -655.856, -126.126, -430.313, -126.126, -430.313, 119.82, -430.313, 359.459, -655.856, 359.459 )
 
 [node name="HUD" type="Control" parent="TabContainer/DK Isles"]
+margin_top = 3.05176e-05
+margin_bottom = 3.05176e-05
 
 [node name="ColorRect" type="ColorRect" parent="TabContainer/DK Isles/HUD"]
 margin_top = -8.0
-margin_right = 1276.0
-margin_bottom = 72.0
+margin_right = 388.0
+margin_bottom = 288.0
 color = Color( 0, 0, 0, 1 )
 
 [node name="ColorRect2" type="ColorRect" parent="TabContainer/DK Isles/HUD"]
 margin_left = 4.0
-margin_right = 1268.0
-margin_bottom = 64.0
+margin_right = 380.0
+margin_bottom = 288.0
 color = Color( 0.0901961, 0.0901961, 0.0901961, 1 )
 
-[node name="Other" type="Control" parent="TabContainer/DK Isles"]
+[node name="Cranky Label" type="Control" parent="TabContainer/DK Isles/HUD"]
+margin_left = 68.0
+margin_top = 176.0
+margin_right = 132.0
+margin_bottom = 240.0
 
-[node name="BattlePad1" parent="TabContainer/DK Isles/Other" instance=ExtResource( 1 )]
-modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
-material = SubResource( 2 )
-margin_left = 1196.0
-margin_top = 400.0
-margin_right = 1196.0
-margin_bottom = 400.0
-hint_tooltip = "Snide Alcove Battlepad
-
-Chunky, Barrel Throw"
-kong = "Battlepad"
-
-[node name="BattlePad2" parent="TabContainer/DK Isles/Other" instance=ExtResource( 1 )]
-modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
-material = SubResource( 2 )
-margin_left = 244.0
-margin_top = 688.0
-margin_right = 244.0
-margin_bottom = 688.0
-hint_tooltip = "Fungi Lobby Battlepad
-
-All Kongs, All Guns, Gorilla Gone"
-kong = "Battlepad"
-
-[node name="Jetpack" parent="TabContainer/DK Isles/Other" instance=ExtResource( 1 )]
-modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
-material = SubResource( 2 )
-margin_left = 4.0
-margin_right = 4.0
-hint_tooltip = "Cranky Jetpac Game
-
-Requires Banana Medals"
-kong = "Jetpac"
-
-[node name="Aztec_Area" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 468.0
-margin_top = 104.0
-margin_right = 468.0
-margin_bottom = 104.0
-
-[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Aztec_Area"]
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD/Cranky Label"]
 position = Vector2( 2.28882e-05, 0 )
 scale = Vector2( 1.88235, 1 )
 texture = ExtResource( 4 )
 
-[node name="Label" type="Label" parent="TabContainer/DK Isles/Aztec_Area"]
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD/Cranky Label"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Cranky's Lab"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Funky Label" type="Control" parent="TabContainer/DK Isles/HUD"]
+visible = false
+margin_left = 68.0
+margin_top = 104.0
+margin_right = 132.0
+margin_bottom = 168.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD/Funky Label"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD/Funky Label"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Funky's Armory"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Candy Label" type="Control" parent="TabContainer/DK Isles/HUD"]
+visible = false
+margin_left = 68.0
+margin_top = 176.0
+margin_right = 132.0
+margin_bottom = 240.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD/Candy Label"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD/Candy Label"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Candy's Music Shop"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Misc Label" type="Control" parent="TabContainer/DK Isles/HUD"]
+margin_left = 68.0
+margin_top = 248.0
+margin_right = 132.0
+margin_bottom = 312.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD/Misc Label"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD/Misc Label"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Misc."
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Japes Label" type="Control" parent="TabContainer/DK Isles/HUD"]
+margin_left = 68.0
+margin_top = 320.0
+margin_right = 132.0
+margin_bottom = 384.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD/Japes Label"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD/Japes Label"]
+margin_left = -36.0
+margin_top = -32.0
+margin_right = 36.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Japes Lobby"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="Aztec Label" type="Control" parent="TabContainer/DK Isles/HUD"]
+margin_left = 68.0
+margin_top = 392.0
+margin_right = 132.0
+margin_bottom = 456.0
+
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD/Aztec Label"]
+position = Vector2( 2.28882e-05, 0 )
+scale = Vector2( 1.88235, 1 )
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD/Aztec Label"]
 margin_left = -36.0
 margin_top = -32.0
 margin_right = 36.0
@@ -600,62 +371,40 @@ align = 1
 valign = 1
 autowrap = true
 
-[node name="Caves_Area" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 468.0
-margin_top = 624.0
-margin_right = 468.0
-margin_bottom = 624.0
+[node name="Factory Label" type="Control" parent="TabContainer/DK Isles/HUD"]
+margin_left = 68.0
+margin_top = 464.0
+margin_right = 132.0
+margin_bottom = 528.0
 
-[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Caves_Area"]
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD/Factory Label"]
 position = Vector2( 2.28882e-05, 0 )
 scale = Vector2( 1.88235, 1 )
 texture = ExtResource( 4 )
 
-[node name="Label" type="Label" parent="TabContainer/DK Isles/Caves_Area"]
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD/Factory Label"]
 margin_left = -36.0
 margin_top = -32.0
 margin_right = 36.0
 margin_bottom = 32.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "Caves Lobby"
+text = "Factory Lobby"
 align = 1
 valign = 1
 autowrap = true
 
-[node name="Fairy_Area" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 796.0
-margin_top = 864.0
-margin_right = 796.0
-margin_bottom = 864.0
+[node name="Galleon Label" type="Control" parent="TabContainer/DK Isles/HUD"]
+margin_left = 68.0
+margin_top = 536.0
+margin_right = 132.0
+margin_bottom = 600.0
 
-[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Fairy_Area"]
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD/Galleon Label"]
 position = Vector2( 2.28882e-05, 0 )
 scale = Vector2( 1.88235, 1 )
 texture = ExtResource( 4 )
 
-[node name="Label" type="Label" parent="TabContainer/DK Isles/Fairy_Area"]
-margin_left = -36.0
-margin_top = -32.0
-margin_right = 36.0
-margin_bottom = 32.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "Fairy Island"
-align = 1
-valign = 1
-autowrap = true
-
-[node name="Galleon_Area" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 1028.0
-margin_top = 744.0
-margin_right = 1028.0
-margin_bottom = 744.0
-
-[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Galleon_Area"]
-position = Vector2( 2.28882e-05, 0 )
-scale = Vector2( 1.88235, 1 )
-texture = ExtResource( 4 )
-
-[node name="Label" type="Label" parent="TabContainer/DK Isles/Galleon_Area"]
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD/Galleon Label"]
 margin_left = -36.0
 margin_top = -32.0
 margin_right = 36.0
@@ -666,62 +415,62 @@ align = 1
 valign = 1
 autowrap = true
 
-[node name="Croc_Area" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 1164.0
-margin_top = 328.0
-margin_right = 1164.0
-margin_bottom = 328.0
+[node name="Forest Label" type="Control" parent="TabContainer/DK Isles/HUD"]
+margin_left = 68.0
+margin_top = 608.0
+margin_right = 132.0
+margin_bottom = 672.0
 
-[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Croc_Area"]
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD/Forest Label"]
 position = Vector2( 2.28882e-05, 0 )
 scale = Vector2( 1.88235, 1 )
 texture = ExtResource( 4 )
 
-[node name="Label" type="Label" parent="TabContainer/DK Isles/Croc_Area"]
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD/Forest Label"]
 margin_left = -36.0
 margin_top = -32.0
 margin_right = 36.0
 margin_bottom = 32.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "Croc Isle"
+text = "Forest Lobby"
 align = 1
 valign = 1
 autowrap = true
 
-[node name="Helm_Area" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 868.0
-margin_top = 536.0
-margin_right = 876.0
-margin_bottom = 544.0
+[node name="Caves Label" type="Control" parent="TabContainer/DK Isles/HUD"]
+margin_left = 68.0
+margin_top = 680.0
+margin_right = 132.0
+margin_bottom = 744.0
 
-[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Helm_Area"]
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD/Caves Label"]
 position = Vector2( 2.28882e-05, 0 )
 scale = Vector2( 1.88235, 1 )
 texture = ExtResource( 4 )
 
-[node name="Label" type="Label" parent="TabContainer/DK Isles/Helm_Area"]
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD/Caves Label"]
 margin_left = -36.0
 margin_top = -32.0
 margin_right = 36.0
 margin_bottom = 32.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "Helm Lobby"
+text = "Caves Lobby"
 align = 1
 valign = 1
 autowrap = true
 
-[node name="Castle_Area" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 1116.0
-margin_top = 112.0
-margin_right = 1116.0
-margin_bottom = 112.0
+[node name="Castle Label" type="Control" parent="TabContainer/DK Isles/HUD"]
+margin_left = 68.0
+margin_top = 752.0
+margin_right = 132.0
+margin_bottom = 816.0
 
-[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Castle_Area"]
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD/Castle Label"]
 position = Vector2( 2.28882e-05, 0 )
 scale = Vector2( 1.88235, 1 )
 texture = ExtResource( 4 )
 
-[node name="Label" type="Label" parent="TabContainer/DK Isles/Castle_Area"]
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD/Castle Label"]
 margin_left = -36.0
 margin_top = -32.0
 margin_right = 36.0
@@ -732,80 +481,453 @@ align = 1
 valign = 1
 autowrap = true
 
-[node name="KLumsy_Area" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 716.0
-margin_top = 112.0
-margin_right = 716.0
-margin_bottom = 112.0
+[node name="Helm Label" type="Control" parent="TabContainer/DK Isles/HUD"]
+margin_left = 68.0
+margin_top = 824.0
+margin_right = 132.0
+margin_bottom = 888.0
 
-[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/KLumsy_Area"]
+[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD/Helm Label"]
 position = Vector2( 2.28882e-05, 0 )
 scale = Vector2( 1.88235, 1 )
 texture = ExtResource( 4 )
 
-[node name="Label" type="Label" parent="TabContainer/DK Isles/KLumsy_Area"]
+[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD/Helm Label"]
 margin_left = -36.0
 margin_top = -32.0
 margin_right = 36.0
 margin_bottom = 32.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "K. Lumsy Isle"
+text = "Helm Lobby"
 align = 1
 valign = 1
 autowrap = true
 
-[node name="Factory_Area" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 836.0
-margin_top = 328.0
-margin_right = 844.0
-margin_bottom = 336.0
+[node name="Zones" parent="TabContainer/DK Isles" instance=ExtResource( 15 )]
+margin_left = 140.0
+margin_top = 40.0
+margin_right = -892.0
+margin_bottom = -772.0
 
-[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/Factory_Area"]
-position = Vector2( 5.19753e-05, 0 )
-scale = Vector2( 0.941178, 1.64706 )
-texture = ExtResource( 4 )
+[node name="Zone_Button" parent="TabContainer/DK Isles/Zones" instance=ExtResource( 17 )]
+margin_right = 70.0
+margin_bottom = 88.0
+text = "DK Isle"
 
-[node name="Label" type="Label" parent="TabContainer/DK Isles/Factory_Area"]
-margin_left = -32.0
-margin_top = -32.0
-margin_right = 40.0
-margin_bottom = 32.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "Factory Lobby"
-align = 1
-valign = 1
-autowrap = true
+[node name="Zone_Button2" parent="TabContainer/DK Isles/Zones" instance=ExtResource( 17 )]
+margin_left = 74.0
+margin_right = 148.0
+margin_bottom = 88.0
+text = "Krem Isle"
 
-[node name="HUD_Cranky" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 420.0
-margin_top = 32.0
-margin_right = 440.0
-margin_bottom = 52.0
+[node name="Zone_Button3" parent="TabContainer/DK Isles/Zones" instance=ExtResource( 17 )]
+margin_left = 152.0
+margin_right = 240.0
+margin_bottom = 88.0
+text = "Level Lobby"
 
-[node name="Backdrop" type="Sprite" parent="TabContainer/DK Isles/HUD_Cranky"]
-position = Vector2( -32, 0 )
-scale = Vector2( 0.941176, 1 )
-texture = ExtResource( 4 )
+[node name="DK" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
 
-[node name="Label" type="Label" parent="TabContainer/DK Isles/HUD_Cranky"]
-margin_left = -64.0
-margin_top = -32.0
-margin_bottom = 32.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "Cranky"
-align = 1
-valign = 1
-autowrap = true
+[node name="DK1" parent="TabContainer/DK Isles/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 954.73
+margin_top = 313.25
+margin_right = 954.73
+margin_bottom = 313.25
+hint_tooltip = "Free GB"
+zone = "DK Isle"
+
+[node name="DK2" parent="TabContainer/DK Isles/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 786.73
+margin_top = 553.25
+margin_right = 786.73
+margin_bottom = 553.25
+hint_tooltip = "Snide Gun Switch
+
+Coconut,"
+zone = "Krem Isle"
+
+[node name="DK3" parent="TabContainer/DK Isles/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 130.73
+margin_top = 465.25
+margin_right = 130.73
+margin_bottom = 465.25
+hint_tooltip = "Factory Lobby
+
+Gorilla Grab, Bongo Blast"
+zone = "Lobby"
+
+[node name="DK4" parent="TabContainer/DK Isles/DK" instance=ExtResource( 1 )]
+material = SubResource( 4 )
+margin_left = 130.73
+margin_top = 681.25
+margin_right = 130.73
+margin_bottom = 681.25
+hint_tooltip = "Caves Lobby Ice Wall
+
+Barrel Throw, Chunky, Primate Punch, Strong Kong"
+zone = "Lobby"
+
+[node name="Diddy" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Diddy1" parent="TabContainer/DK Isles/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 858.73
+margin_top = 241.25
+margin_right = 858.73
+margin_bottom = 241.25
+hint_tooltip = "Top of Isle
+
+Rocketbarrel, Lanky Music, Chunky, Barrel Throw"
+kong = "Diddy"
+zone = "DK Isle"
+
+[node name="Diddy2" parent="TabContainer/DK Isles/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 906.73
+margin_top = 241.25
+margin_right = 906.73
+margin_bottom = 241.25
+hint_tooltip = "Top of Isle Gun Switch
+
+Rocketbarrel, Peanuts, Lanky Music, Chunky, Barrel Throw"
+kong = "Diddy"
+zone = "DK Isle"
+
+[node name="Diddy3" parent="TabContainer/DK Isles/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 834.73
+margin_top = 553.25
+margin_right = 834.73
+margin_bottom = 553.25
+hint_tooltip = "Snide Diddy Pad
+
+Simian Spring"
+kong = "Diddy"
+zone = "Krem Isle"
+
+[node name="Diddy4" parent="TabContainer/DK Isles/Diddy" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+margin_left = 178.73
+margin_top = 681.25
+margin_right = 178.73
+margin_bottom = 681.25
+hint_tooltip = "Caves Lobby Music Pad
+
+Rocketbarrel, Guitar"
+kong = "Diddy"
+zone = "Lobby"
+
+[node name="Lanky" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Lanky1" parent="TabContainer/DK Isles/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 130.73
+margin_top = 321.25
+margin_right = 130.73
+margin_bottom = 321.25
+hint_tooltip = "Japes Lobby Boulder Music Pad
+
+Barrel Throw, Trombone"
+kong = "Lanky"
+zone = "Lobby"
+
+[node name="Lanky2" parent="TabContainer/DK Isles/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1074.73
+margin_top = 713.25
+margin_right = 1074.73
+margin_bottom = 713.25
+hint_tooltip = "K Lumsy Gun Switch
+
+Grape"
+kong = "Lanky"
+zone = "Krem Isle"
+
+[node name="Lanky3" parent="TabContainer/DK Isles/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 1074.73
+margin_top = 641.25
+margin_right = 1074.73
+margin_bottom = 641.25
+hint_tooltip = "K Lumsy Barrel
+
+Orangestand Sprint"
+kong = "Lanky"
+zone = "Krem Isle"
+
+[node name="Lanky4" parent="TabContainer/DK Isles/Lanky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 1, 1 )
+material = SubResource( 2 )
+margin_left = 130.73
+margin_top = 753.25
+margin_right = 130.73
+margin_bottom = 753.25
+hint_tooltip = "Castle Lobby Boulder Pad
+
+Baboon Balloon, Barrel Throw"
+kong = "Lanky"
+zone = "Lobby"
+
+[node name="Tiny" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Tiny1" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 450.73
+margin_top = 361.25
+margin_right = 450.73
+margin_bottom = 361.25
+hint_tooltip = "Fairy Island Gun Switch
+
+Feather"
+kong = "Tiny"
+zone = "Fairy Isle"
+
+[node name="Tiny2" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 130.73
+margin_top = 393.25
+margin_right = 130.73
+margin_bottom = 393.25
+hint_tooltip = "Aztec Lobby Gongs
+
+Chimpy Charge, Ponytail Twirl"
+kong = "Tiny"
+zone = "Lobby"
+
+[node name="Tiny3" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 130.73
+margin_top = 537.25
+margin_right = 130.73
+margin_bottom = 537.25
+hint_tooltip = "Galleon Lobby Super Switch
+
+Super Simian Slam, Mini Monkey, Dive, Chunky"
+kong = "Tiny"
+zone = "Lobby"
+
+[node name="Tiny4" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 698.73
+margin_top = 841.25
+margin_right = 698.73
+margin_bottom = 841.25
+hint_tooltip = "Monkeyport Music Pad
+
+Monkeyport, Saxaphone"
+kong = "Tiny"
+zone = "Krem Isle"
+
+[node name="Tiny5" parent="TabContainer/DK Isles/Tiny" instance=ExtResource( 1 )]
+modulate = Color( 1, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 498.73
+margin_top = 361.25
+margin_right = 498.73
+margin_bottom = 361.25
+hint_tooltip = "Banana Fairy Reward
+
+20 Fairies"
+kong = "Tiny"
+zone = "Banana Room"
+
+[node name="Chunky" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Chunky1" parent="TabContainer/DK Isles/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 850.73
+margin_top = 97.25
+margin_right = 850.73
+margin_bottom = 97.25
+hint_tooltip = "Gun Switch
+
+Pineapple"
+kong = "Chunky"
+zone = "DK Isle"
+
+[node name="Chunky2" parent="TabContainer/DK Isles/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 810.73
+margin_top = 313.25
+margin_right = 810.73
+margin_bottom = 313.25
+hint_tooltip = "Boulder Music Pad
+
+Barrel Throw, Triangle"
+kong = "Chunky"
+zone = "DK Isle"
+
+[node name="Chunky3" parent="TabContainer/DK Isles/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 474.73
+margin_top = 233.25
+margin_right = 474.73
+margin_bottom = 233.25
+hint_tooltip = "Giant Rock
+
+Monkeyport, Saxaphone, Hunky Chunky"
+kong = "Chunky"
+zone = "DK Isle"
+
+[node name="Chunky4" parent="TabContainer/DK Isles/Chunky" instance=ExtResource( 1 )]
+modulate = Color( 0, 1, 0, 1 )
+material = SubResource( 2 )
+margin_left = 130.73
+margin_top = 825.25
+margin_right = 130.73
+margin_bottom = 825.25
+hint_tooltip = "Helm Lobby Pad
+
+Gorilla Gone"
+kong = "Chunky"
+zone = "Lobby"
+
+[node name="Kasplat" type="Control" parent="TabContainer/DK Isles"]
+margin_left = 9.2699
+margin_top = -1.25
+margin_right = 9.2699
+margin_bottom = -1.25
+
+[node name="Kasplat1" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 178.73
+margin_top = 825.25
+margin_right = 178.73
+margin_bottom = 825.25
+hint_tooltip = "Helm Lobby Kasplat"
+kong = "Kasplat"
+
+[node name="Kasplat2" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 178.73
+margin_top = 753.25
+margin_right = 178.73
+margin_bottom = 753.25
+hint_tooltip = "Castle Lobby Kasplat
+
+Coconut"
+kong = "Kasplat"
+
+[node name="Kasplat3" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 226.73
+margin_top = 681.25
+margin_right = 226.73
+margin_bottom = 681.25
+hint_tooltip = "Caves Lobby Kasplat
+
+Primate Punch"
+kong = "Kasplat"
+
+[node name="Kasplat4" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 178.73
+margin_top = 465.25
+margin_right = 178.73
+margin_bottom = 465.25
+hint_tooltip = "Factory Lobby Kasplat
+
+Primate Punch"
+kong = "Kasplat"
+
+[node name="Kasplat5" parent="TabContainer/DK Isles/Kasplat" instance=ExtResource( 1 )]
+modulate = Color( 0, 0, 1, 1 )
+material = SubResource( 2 )
+margin_left = 178.73
+margin_top = 537.25
+margin_right = 178.73
+margin_bottom = 537.25
+hint_tooltip = "Galleon Lobby Kasplat"
+kong = "Kasplat"
+
+[node name="Other" type="Control" parent="TabContainer/DK Isles"]
+
+[node name="BattlePad1" parent="TabContainer/DK Isles/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.215686, 1 )
+material = SubResource( 2 )
+margin_left = 892.0
+margin_top = 552.0
+margin_right = 892.0
+margin_bottom = 552.0
+hint_tooltip = "Snide Alcove Battlepad
+
+Chunky, Barrel Throw"
+kong = "Battlepad"
+
+[node name="BattlePad2" parent="TabContainer/DK Isles/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
+material = SubResource( 2 )
+margin_left = 140.0
+margin_top = 608.0
+margin_right = 140.0
+margin_bottom = 608.0
+hint_tooltip = "Fungi Lobby Battlepad
+
+All Kongs, All Guns, Gorilla Gone"
+kong = "Battlepad"
+
+[node name="Jetpack" parent="TabContainer/DK Isles/Other" instance=ExtResource( 1 )]
+modulate = Color( 0.215686, 0.215686, 0.219608, 1 )
+material = SubResource( 2 )
+margin_left = 140.0
+margin_top = 248.0
+margin_right = 140.0
+margin_bottom = 248.0
+hint_tooltip = "Cranky Jetpac Game
+
+Requires Banana Medals"
+kong = "Jetpac"
 
 [node name="Cranky" type="Control" parent="TabContainer/DK Isles"]
-margin_left = 116.0
-margin_right = 116.0
 
 [node name="DK6" parent="TabContainer/DK Isles/Cranky" instance=ExtResource( 1 )]
 modulate = Color( 0.352941, 1, 0.14902, 1 )
 material = SubResource( 2 )
-margin_left = 308.0
-margin_right = 308.0
+margin_left = 140.0
+margin_top = 176.0
+margin_right = 140.0
+margin_bottom = 176.0
 hint_tooltip = "Find Diddy
 
 (Random Kong)"
@@ -813,8 +935,10 @@ hint_tooltip = "Find Diddy
 [node name="Diddy6" parent="TabContainer/DK Isles/Cranky" instance=ExtResource( 1 )]
 modulate = Color( 0.352941, 1, 0.14902, 1 )
 material = SubResource( 2 )
-margin_left = 356.0
-margin_right = 356.0
+margin_left = 188.0
+margin_top = 176.0
+margin_right = 188.0
+margin_bottom = 176.0
 hint_tooltip = "Find Diddy
 
 (Random Kong)"
@@ -823,8 +947,10 @@ kong = "Diddy"
 [node name="Lanky6" parent="TabContainer/DK Isles/Cranky" instance=ExtResource( 1 )]
 modulate = Color( 0.352941, 1, 0.14902, 1 )
 material = SubResource( 2 )
-margin_left = 404.0
-margin_right = 404.0
+margin_left = 236.0
+margin_top = 176.0
+margin_right = 236.0
+margin_bottom = 176.0
 hint_tooltip = "Find Diddy
 
 (Random Kong)"
@@ -833,8 +959,10 @@ kong = "Lanky"
 [node name="Tiny6" parent="TabContainer/DK Isles/Cranky" instance=ExtResource( 1 )]
 modulate = Color( 0.352941, 1, 0.14902, 1 )
 material = SubResource( 2 )
-margin_left = 452.0
-margin_right = 452.0
+margin_left = 284.0
+margin_top = 176.0
+margin_right = 284.0
+margin_bottom = 176.0
 hint_tooltip = "Find Diddy
 
 (Random Kong)"
@@ -843,8 +971,10 @@ kong = "Tiny"
 [node name="Chunky6" parent="TabContainer/DK Isles/Cranky" instance=ExtResource( 1 )]
 modulate = Color( 0.352941, 1, 0.14902, 1 )
 material = SubResource( 2 )
-margin_left = 500.0
-margin_right = 500.0
+margin_left = 332.0
+margin_top = 176.0
+margin_right = 332.0
+margin_bottom = 176.0
 hint_tooltip = "Find Diddy
 
 (Random Kong)"
@@ -852,9 +982,9 @@ kong = "Chunky"
 
 [node name="Cranky" parent="TabContainer/DK Isles/Cranky" instance=ExtResource( 6 )]
 material = SubResource( 5 )
-margin_left = 536.0
+margin_left = 844.0
 margin_top = 448.0
-margin_right = 536.0
+margin_right = 844.0
 margin_bottom = 448.0
 hint_tooltip = "Caves Near Rambi"
 shop = "Cranky"
@@ -862,17 +992,16 @@ shop = "Cranky"
 [node name="Snide" type="Control" parent="TabContainer/DK Isles"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -4.0
-margin_top = -8.0
-margin_right = -1244.0
-margin_bottom = -876.0
+margin_left = 132.0
+margin_right = -1140.0
+margin_bottom = -900.0
 
 [node name="Snide" parent="TabContainer/DK Isles/Snide" instance=ExtResource( 6 )]
 material = SubResource( 5 )
-margin_left = 1104.0
-margin_top = 408.0
-margin_right = 1104.0
-margin_bottom = 408.0
+margin_left = 712.0
+margin_top = 632.0
+margin_right = 712.0
+margin_bottom = 632.0
 hint_tooltip = "Near Anthill"
 shop = "Snide"
 
@@ -6594,3 +6723,5 @@ margin_right = 708.0
 margin_bottom = 648.0
 hint_tooltip = "Storage Room"
 shop = "Snide"
+
+[editable path="TabContainer/DK Isles/Zones"]
