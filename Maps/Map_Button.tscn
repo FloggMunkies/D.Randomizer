@@ -1,9 +1,9 @@
 [gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Maps/Highlight.tres" type="Material" id=1]
-[ext_resource path="res://Maps/Map_Shop_Button.gd" type="Script" id=2]
+[ext_resource path="res://sprites/DK_Icon.png" type="Texture" id=2]
 [ext_resource path="res://OLD/CheckButton_Style.tres" type="Theme" id=3]
-[ext_resource path="res://sprites/images/Shop_Icon.png" type="Texture" id=4]
+[ext_resource path="res://Maps/Map_Button.gd" type="Script" id=4]
 [ext_resource path="res://sprites/images/checkmark.bmp" type="Texture" id=5]
 [ext_resource path="res://sprites/images/indicator.png" type="Texture" id=6]
 [ext_resource path="res://OLD/OpenSans-Regular.ttf" type="DynamicFontData" id=7]
@@ -22,7 +22,7 @@ font_data = ExtResource( 7 )
 [sub_resource type="Theme" id=4]
 default_font = SubResource( 3 )
 
-[node name="Map_Shop_Button" type="Control"]
+[node name="Map_Button" type="Control"]
 material = ExtResource( 1 )
 margin_top = 32.0
 margin_bottom = 32.0
@@ -32,7 +32,7 @@ Descr
 
 Reqs"
 theme = ExtResource( 3 )
-script = ExtResource( 2 )
+script = ExtResource( 4 )
 
 [node name="ColorRect" type="ColorRect" parent="."]
 margin_left = -4.0
@@ -46,7 +46,7 @@ margin_left = -2.0
 margin_top = -34.0
 margin_right = 42.0
 margin_bottom = 34.0
-color = Color( 0.745098, 0.745098, 0.745098, 1 )
+color = Color( 0.196078, 0.196078, 0.196078, 1 )
 
 [node name="Indicator" type="Sprite" parent="."]
 modulate = Color( 1, 1, 1, 0 )
@@ -79,7 +79,7 @@ Descr
 Reqs"
 theme = SubResource( 4 )
 toggle_mode = true
-icon = ExtResource( 4 )
+icon = ExtResource( 2 )
 flat = true
 icon_align = 1
 expand_icon = true

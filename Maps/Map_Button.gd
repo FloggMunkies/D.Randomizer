@@ -91,6 +91,10 @@ func _load_sprite():
 			new_sprite = load("res://sprites/Jetpac_Icon.png")
 		"Arcade":
 			new_sprite = load("res://sprites/Arcade_Icon.png")
+		"Fairy":
+			new_sprite = load("res://sprites/Fairy_Icon.png")
+		"Dirt":
+			new_sprite = load("res://sprites/Dirt_Icon.png")
 		_:
 			new_sprite = load("res://sprites/DK_Icon.png")
 	if new_sprite:

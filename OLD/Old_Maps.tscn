@@ -1,0 +1,327 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://OLD/Map_Check_Button.tscn" type="PackedScene" id=1]
+[ext_resource path="res://sprites/DK Isles.bmp" type="Texture" id=2]
+[ext_resource path="res://sprites/images/circle.bmp" type="Texture" id=3]
+[ext_resource path="res://OLD/grey_trans.tres" type="Material" id=4]
+[ext_resource path="res://Maps/Visibility Button.gd" type="Script" id=5]
+
+[sub_resource type="Shader" id=1]
+resource_local_to_scene = true
+code = "shader_type canvas_item;
+
+//void fragment(){
+//	COLOR = texture(TEXTURE, UV);
+//	float lumi = (COLOR.r +COLOR.g+COLOR.b) / 3.0;
+//	COLOR.rgb = vec3(lumi);
+//}
+
+uniform bool clicked=false;
+
+void fragment(){
+vec4 col = texture(TEXTURE,UV).rgba;
+if (col.r==0.0/255.0 && col.g==0.0/255.0 && col.b==0.0/255.0) {
+    col.a=0.0;
+}
+COLOR=col;
+if (clicked){
+	float lumi = (COLOR.r +COLOR.g+COLOR.b) / 3.0;
+	COLOR.rgb = vec3(lumi);
+	}
+}
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+shader = SubResource( 1 )
+shader_param/clicked = false
+
+[node name="Maps" type="Node2D"]
+
+[node name="TabContainer" type="TabContainer" parent="."]
+margin_right = 1280.0
+margin_bottom = 960.0
+
+[node name="DK Isles" type="Tabs" parent="TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="DK Isles Sprite" type="Sprite" parent="TabContainer/DK Isles"]
+position = Vector2( 588, 456 )
+scale = Vector2( 2.37308, 2.37308 )
+texture = ExtResource( 2 )
+
+[node name="Visibility Button" type="CheckButton" parent="TabContainer/DK Isles"]
+material = ExtResource( 4 )
+margin_left = 1175.33
+margin_top = 32.0
+margin_right = 1275.33
+margin_bottom = 72.0
+icon = ExtResource( 3 )
+script = ExtResource( 5 )
+
+[node name="DK" type="Control" parent="TabContainer/DK Isles/Visibility Button"]
+margin_left = -1166.06
+margin_top = -33.25
+margin_right = -1166.06
+margin_bottom = -33.25
+
+[node name="DK1" parent="TabContainer/DK Isles/Visibility Button/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 538.731
+margin_top = 281.25
+margin_right = 606.731
+margin_bottom = 349.25
+hint_tooltip = "First GB"
+
+[node name="DK2" parent="TabContainer/DK Isles/Visibility Button/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 842.731
+margin_top = 361.25
+margin_right = 910.731
+margin_bottom = 429.25
+hint_tooltip = "Near Snide DK Gun"
+
+[node name="DK3" parent="TabContainer/DK Isles/Visibility Button/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 914.731
+margin_top = 361.25
+margin_right = 982.731
+margin_bottom = 429.25
+hint_tooltip = "Factory Lobby DK Music Pad + Lever"
+
+[node name="DK4" parent="TabContainer/DK Isles/Visibility Button/DK" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 488.0
+margin_top = 440.0
+margin_right = 556.0
+margin_bottom = 508.0
+hint_tooltip = "Caves Lobby Strong Kong"
+
+[node name="Diddy" type="Control" parent="TabContainer/DK Isles/Visibility Button"]
+margin_left = -1166.06
+margin_top = -33.25
+margin_right = -1166.06
+margin_bottom = -33.25
+
+[node name="Diddy1" parent="TabContainer/DK Isles/Visibility Button/Diddy" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 426.731
+margin_top = 337.25
+margin_right = 494.731
+margin_bottom = 405.25
+hint_tooltip = "Diddy Barrel Top of  Isle"
+
+[node name="Diddy2" parent="TabContainer/DK Isles/Visibility Button/Diddy" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 346.731
+margin_top = 337.25
+margin_right = 414.731
+margin_bottom = 405.25
+hint_tooltip = "Diddy Gun Top of Isle"
+
+[node name="Diddy3" parent="TabContainer/DK Isles/Visibility Button/Diddy" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 842.731
+margin_top = 433.25
+margin_right = 910.731
+margin_bottom = 501.25
+hint_tooltip = "Snide Diddy Pad"
+
+[node name="Diddy4" parent="TabContainer/DK Isles/Visibility Button/Diddy" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 418.731
+margin_top = 441.25
+margin_right = 486.731
+margin_bottom = 509.25
+hint_tooltip = "Caves Lobby Diddy Barrel and Music"
+
+[node name="Lanky" type="Control" parent="TabContainer/DK Isles/Visibility Button"]
+margin_left = -1166.06
+margin_top = -33.25
+margin_right = -1166.06
+margin_bottom = -33.25
+
+[node name="Lanky1" parent="TabContainer/DK Isles/Visibility Button/Lanky" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 538.731
+margin_top = 353.25
+margin_right = 606.731
+margin_bottom = 421.25
+hint_tooltip = "Japes Lobby Boulder Music Pad"
+
+[node name="Lanky2" parent="TabContainer/DK Isles/Visibility Button/Lanky" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 770.731
+margin_top = 81.25
+margin_right = 838.731
+margin_bottom = 149.25
+hint_tooltip = "Klumsy Isle Lanky Gun"
+
+[node name="Lanky3" parent="TabContainer/DK Isles/Visibility Button/Lanky" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 770.731
+margin_top = 225.25
+margin_right = 838.731
+margin_bottom = 293.25
+hint_tooltip = "Klumsy Isle Lanky Barrel"
+
+[node name="Lanky4" parent="TabContainer/DK Isles/Visibility Button/Lanky" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 978.731
+margin_top = 57.25
+margin_right = 1046.73
+margin_bottom = 125.25
+hint_tooltip = "Castle Lobby Boulder Lanky Pad"
+
+[node name="Tiny" type="Control" parent="TabContainer/DK Isles/Visibility Button"]
+margin_left = -1166.06
+margin_top = -33.25
+margin_right = -1166.06
+margin_bottom = -33.25
+
+[node name="Tiny1" parent="TabContainer/DK Isles/Visibility Button/Tiny" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 746.731
+margin_top = 713.25
+margin_right = 814.731
+margin_bottom = 781.25
+hint_tooltip = "Fairy Isle Tiny Gun"
+
+[node name="Tiny2" parent="TabContainer/DK Isles/Visibility Button/Tiny" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 474.731
+margin_top = 145.25
+margin_right = 542.731
+margin_bottom = 213.25
+hint_tooltip = "Aztec Lobby Tiny Gongs"
+
+[node name="Tiny3" parent="TabContainer/DK Isles/Visibility Button/Tiny" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 842.731
+margin_top = 505.25
+margin_right = 910.731
+margin_bottom = 573.25
+hint_tooltip = "Galleon Lobby Tiny Super Switch"
+
+[node name="Tiny4" parent="TabContainer/DK Isles/Visibility Button/Tiny" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 986.731
+margin_top = 289.25
+margin_right = 1054.73
+margin_bottom = 357.25
+hint_tooltip = "Croc Isle Tiny Monkeyport and Music"
+
+[node name="Tiny5" parent="TabContainer/DK Isles/Visibility Button/Tiny" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 746.731
+margin_top = 537.25
+margin_right = 814.731
+margin_bottom = 605.25
+hint_tooltip = "20 Fairies"
+
+[node name="Chunky" type="Control" parent="TabContainer/DK Isles/Visibility Button"]
+margin_left = -1166.06
+margin_top = -33.25
+margin_right = -1166.06
+margin_bottom = -33.25
+
+[node name="Chunky1" parent="TabContainer/DK Isles/Visibility Button/Chunky" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 346.731
+margin_top = 409.25
+margin_right = 414.731
+margin_bottom = 477.25
+hint_tooltip = "Chunky Gun Switch"
+
+[node name="Chunky2" parent="TabContainer/DK Isles/Visibility Button/Chunky" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 538.731
+margin_top = 209.25
+margin_right = 606.731
+margin_bottom = 277.25
+hint_tooltip = "Chunky Boulder Music"
+
+[node name="Chunky3" parent="TabContainer/DK Isles/Visibility Button/Chunky" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 490.731
+margin_top = 689.25
+margin_right = 558.731
+margin_bottom = 757.25
+hint_tooltip = "Chunky Barrel X Isle"
+
+[node name="Chunky4" parent="TabContainer/DK Isles/Visibility Button/Chunky" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 986.731
+margin_top = 433.25
+margin_right = 1054.73
+margin_bottom = 501.25
+hint_tooltip = "Helm Lobby Chunky Pad"
+
+[node name="Kasplat" type="Control" parent="TabContainer/DK Isles/Visibility Button"]
+margin_left = -1166.06
+margin_top = -33.25
+margin_right = -1166.06
+margin_bottom = -33.25
+
+[node name="Kasplat1" parent="TabContainer/DK Isles/Visibility Button/Kasplat" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 986.731
+margin_top = 361.25
+margin_right = 1054.73
+margin_bottom = 429.25
+hint_tooltip = "Helm Lobby Kasplat"
+
+[node name="Kasplat2" parent="TabContainer/DK Isles/Visibility Button/Kasplat" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 906.731
+margin_top = 57.25
+margin_right = 974.731
+margin_bottom = 125.25
+hint_tooltip = "Castle Lobby Kasplat DK Gun"
+
+[node name="Kasplat3" parent="TabContainer/DK Isles/Visibility Button/Kasplat" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 554.731
+margin_top = 441.25
+margin_right = 622.731
+margin_bottom = 509.25
+hint_tooltip = "Caves Lobby Ice Wall Kasplat"
+
+[node name="Kasplat4" parent="TabContainer/DK Isles/Visibility Button/Kasplat" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 914.731
+margin_top = 433.25
+margin_right = 982.731
+margin_bottom = 501.25
+hint_tooltip = "Factory Lobby ? Box Kasplat"
+
+[node name="Kasplat5" parent="TabContainer/DK Isles/Visibility Button/Kasplat" instance=ExtResource( 1 )]
+material = SubResource( 2 )
+margin_left = 842.731
+margin_top = 577.25
+margin_right = 910.731
+margin_bottom = 645.25
+hint_tooltip = "Galleon Lobby Kasplat"
+
+[node name="ColorRect" type="ColorRect" parent="TabContainer/DK Isles/Visibility Button"]
+margin_left = 8.0
+margin_top = -32.0
+margin_right = 96.0
+margin_bottom = 8.0
+
+[node name="Label" type="Label" parent="TabContainer/DK Isles/Visibility Button"]
+margin_left = 8.0
+margin_top = -32.0
+margin_right = 96.0
+margin_bottom = 8.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "HIDE BOXES"
+align = 1
+valign = 1
+
+[connection signal="pressed" from="TabContainer/DK Isles/Visibility Button" to="TabContainer/DK Isles/Visibility Button" method="_on_Visibility_Button_pressed"]

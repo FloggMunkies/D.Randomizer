@@ -1,0 +1,13 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://sprites/images/Orangstand Sprint.bmp" type="Texture" id=1]
+[ext_resource path="res://OLD/grey_trans.tres" type="Material" id=2]
+[ext_resource path="res://OLD/Button.gd" type="Script" id=3]
+[ext_resource path="res://OLD/CheckButton_Style.tres" type="Theme" id=4]
+
+[node name="Lanky_Move_Button" type="CheckButton"]
+material = ExtResource( 2 )
+hint_tooltip = "Lanky Move - OrangStand"
+theme = ExtResource( 4 )
+icon = ExtResource( 1 )
+script = ExtResource( 3 )

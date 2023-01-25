@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://OLD/black_trans.tres" type="Material" id=1]
+[ext_resource path="res://GUI/Logic/Counters/Counter.gd" type="Script" id=2]
+[ext_resource path="res://sprites/images/Golden_Banana_Icon.bmp" type="Texture" id=3]
+
+[node name="Counter" type="Button"]
+material = ExtResource( 1 )
+margin_right = 46.0
+margin_bottom = 47.0
+icon = ExtResource( 3 )
+flat = true
+align = 0
+script = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 24.0
+margin_top = 24.0
+margin_right = 56.0
+margin_bottom = 56.0
+text = "0"
+align = 1
+valign = 1
+uppercase = true
+
+[connection signal="gui_input" from="." to="." method="_on_Level_Lobby_Button_gui_input"]
+[connection signal="gui_input" from="." to="." method="_on_Counter_gui_input"]
+[connection signal="pressed" from="." to="." method="_on_Level_Lobby_Button_pressed"]
