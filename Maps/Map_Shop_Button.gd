@@ -24,7 +24,7 @@ func _ready():
 	
 	$Button.set_tooltip(hint_tooltip)
 	
-	connect("recheck_logic", get_tree().get_root().get_node("Main").get_node("TabContainer").get_node("Logic").get_node("Logic"), "update")
+	var _c = connect("recheck_logic", get_tree().get_root().get_node("Main").get_node("TabContainer").get_node("Logic").get_node("Logic"), "update")
 
 func _on_item_pressed(id):
 	shop = $Hints.get_popup().get_item_text(id)

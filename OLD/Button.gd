@@ -4,7 +4,7 @@ extends CheckButton
 func _ready():
 	modulate = Color(0.5, 0.5, 0.5, 0.5)
 
-func _process(delta):
+func _process(_delta):
 	if InputEventMouseButton:
 		if is_pressed():
 			modulate = Color(1, 1, 1, 1)

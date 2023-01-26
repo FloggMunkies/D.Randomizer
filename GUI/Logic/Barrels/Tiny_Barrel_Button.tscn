@@ -2,7 +2,7 @@
 
 [ext_resource path="res://OLD/grey_trans.tres" type="Material" id=1]
 [ext_resource path="res://sprites/Tiny_Icon.png" type="Texture" id=2]
-[ext_resource path="res://sprites/images/Barrel.bmp" type="Texture" id=3]
+[ext_resource path="res://sprites/Barrel_Icon.png" type="Texture" id=3]
 [ext_resource path="res://OLD/Button.gd" type="Script" id=4]
 [ext_resource path="res://OLD/CheckButton_Style.tres" type="Theme" id=5]
 
@@ -16,9 +16,16 @@ theme = ExtResource( 5 )
 icon = ExtResource( 2 )
 script = ExtResource( 4 )
 
-[node name="Sprite" type="Sprite" parent="."]
+[node name="Sprite" type="TextureRect" parent="."]
 show_behind_parent = true
 material = ExtResource( 1 )
-position = Vector2( 35, 35 )
-scale = Vector2( 1.02941, 1.02941 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -35.0
+margin_top = -35.0
+margin_right = 35.0
+margin_bottom = 35.0
 texture = ExtResource( 3 )
+expand = true

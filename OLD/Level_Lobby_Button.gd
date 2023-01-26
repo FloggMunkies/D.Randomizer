@@ -7,7 +7,7 @@ signal update_logic
 
 func _ready():
 	self.modulate = Color(0.5, 0.5, 0.5, 0.5)
-	connect("update_logic", get_tree().get_root().get_node("Main").get_node("TabContainer").get_node("Logic").get_node("Logic"), "update_level_logic")
+	var _c = connect("update_logic", get_tree().get_root().get_node("Main").get_node("TabContainer").get_node("Logic").get_node("Logic"), "update_level_logic")
 
 func count(index):
 	match index:

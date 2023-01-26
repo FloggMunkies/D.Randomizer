@@ -5,7 +5,7 @@ signal recheck_logic
 
 func _ready():
 	fancy()
-	connect("recheck_logic", get_tree().get_root().get_node("Main").get_node("TabContainer").get_node("Logic").get_node("Logic"), "update")
+	var _c = connect("recheck_logic", get_tree().get_root().get_node("Main").get_node("TabContainer").get_node("Logic").get_node("Logic"), "update")
 
 func count(index):
 	if index==1:

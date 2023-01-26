@@ -152,17 +152,17 @@ func update():
 	var check_dict
 	special_flags_update()
 	check_dict = test()
-	var settings = [flags["Activate_Bananaports_Isles"],
-	flags["Shuffle_Shop_Locations"],
-	flags["Shuffle_Kasplats"],
-	flags["Training_Barrels"],
-	flags["Banana_Fairy_Isle"],
-	flags["Shuffle_Bananaports"],
-	flags["Autocomplete_Bonus_Barrels"],
-	flags["Open_Lobbies"],
-	flags["Open_Levels"],
-	flags["Remove_High_Requirments"]
-	]
+#	var settings = [flags["Activate_Bananaports_Isles"],
+#	flags["Shuffle_Shop_Locations"],
+#	flags["Shuffle_Kasplats"],
+#	flags["Training_Barrels"],
+#	flags["Banana_Fairy_Isle"],
+#	flags["Shuffle_Bananaports"],
+#	flags["Autocomplete_Bonus_Barrels"],
+#	flags["Open_Lobbies"],
+#	flags["Open_Levels"],
+#	flags["Remove_High_Requirments"]
+#	]
 	emit_signal("update_checks", check_dict)
 
 func update_level_logic(level, flag):

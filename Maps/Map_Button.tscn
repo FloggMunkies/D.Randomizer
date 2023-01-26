@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Maps/Highlight.tres" type="Material" id=1]
 [ext_resource path="res://sprites/DK_Icon.png" type="Texture" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://sprites/images/checkmark.bmp" type="Texture" id=5]
 [ext_resource path="res://sprites/images/indicator.png" type="Texture" id=6]
 [ext_resource path="res://OLD/OpenSans-Regular.ttf" type="DynamicFontData" id=7]
+[ext_resource path="res://Maps/Hints.gd" type="Script" id=8]
 
 [sub_resource type="DynamicFont" id=1]
 size = 10
@@ -14,6 +15,13 @@ font_data = ExtResource( 7 )
 
 [sub_resource type="Theme" id=2]
 MenuButton/fonts/font = SubResource( 1 )
+
+[sub_resource type="DynamicFont" id=5]
+size = 9
+font_data = ExtResource( 7 )
+
+[sub_resource type="Theme" id=6]
+default_font = SubResource( 5 )
 
 [sub_resource type="DynamicFont" id=3]
 size = 32
@@ -55,22 +63,35 @@ scale = Vector2( 0.705882, 0.470588 )
 texture = ExtResource( 6 )
 
 [node name="Hints" type="MenuButton" parent="."]
-margin_left = -1.0
-margin_top = -32.0
-margin_right = 41.0
-margin_bottom = -12.0
+margin_left = -2.0
+margin_top = -33.0
+margin_right = 42.0
+margin_bottom = -3.0
 theme = SubResource( 2 )
 toggle_mode = false
 flat = false
 clip_text = true
 icon_align = 1
 expand_icon = true
+script = ExtResource( 8 )
+
+[node name="Label" type="Label" parent="Hints"]
+margin_left = -1.0
+margin_top = -1.0
+margin_right = 44.0
+margin_bottom = 29.0
+theme = SubResource( 6 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+align = 1
+valign = 1
+autowrap = true
 
 [node name="Button" type="Button" parent="."]
 material = ExtResource( 1 )
-margin_top = -8.0
-margin_right = 72.0
-margin_bottom = 60.0
+margin_left = -1.0
+margin_top = -3.0
+margin_right = 71.0
+margin_bottom = 58.0
 rect_scale = Vector2( 0.6, 0.6 )
 hint_tooltip = "Kong
 

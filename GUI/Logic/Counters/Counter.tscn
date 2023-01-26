@@ -13,11 +13,26 @@ flat = true
 align = 0
 script = ExtResource( 2 )
 
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -24.0
+margin_top = -24.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0, 0, 0, 0.490196 )
+
 [node name="Label" type="Label" parent="."]
-margin_left = 24.0
-margin_top = 24.0
-margin_right = 56.0
-margin_bottom = 56.0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -24.0
+margin_top = -24.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 text = "0"
 align = 1
 valign = 1

@@ -1,7 +1,6 @@
-[gd_scene load_steps=26 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://Maps/Map_Button.tscn" type="PackedScene" id=1]
-[ext_resource path="res://sprites/DK Isles.bmp" type="Texture" id=2]
 [ext_resource path="res://Maps/Maps.gd" type="Script" id=3]
 [ext_resource path="res://sprites/images/indicator.png" type="Texture" id=4]
 [ext_resource path="res://sprites/Jungle Japes.bmp" type="Texture" id=5]
@@ -14,9 +13,9 @@
 [ext_resource path="res://sprites/dk64_maps/maps/Castle/Dungeon Tunnel.png" type="Texture" id=12]
 [ext_resource path="res://sprites/dk64_maps/maps/Castle/Creepy Castle.png" type="Texture" id=13]
 [ext_resource path="res://sprites/dk64_maps/maps/Isles/DK Isles.png" type="Texture" id=14]
-[ext_resource path="res://Zones.tscn" type="PackedScene" id=15]
+[ext_resource path="res://Maps/Zones.tscn" type="PackedScene" id=15]
 [ext_resource path="res://Maps/Map_Sprite.gd" type="Script" id=16]
-[ext_resource path="res://Zone_Button.tscn" type="PackedScene" id=17]
+[ext_resource path="res://Maps/Zone_Button.tscn" type="PackedScene" id=17]
 [ext_resource path="res://sprites/dk64_maps/maps/Japes/Jungle Japes.png" type="Texture" id=18]
 [ext_resource path="res://sprites/dk64_maps/maps/Castle/Crypt - Hub.png" type="Texture" id=19]
 [ext_resource path="res://sprites/dk64_maps/maps/Caves/Crystal Caves.png" type="Texture" id=20]
@@ -184,24 +183,15 @@ script = ExtResource( 3 )
 [node name="TabContainer" type="TabContainer" parent="."]
 margin_right = 1280.0
 margin_bottom = 936.0
+drag_to_rearrange_enabled = true
 
 [node name="DK Isles" type="Tabs" parent="TabContainer"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
-
-[node name="old" type="Sprite" parent="TabContainer/DK Isles"]
-visible = false
-modulate = Color( 0.831373, 0.831373, 0.831373, 1 )
-position = Vector2( 636, 480 )
-scale = Vector2( 2.83987, 2.85333 )
-texture = ExtResource( 2 )
-region_enabled = true
-region_rect = Rect2( 50, 25, 450, 300 )
 
 [node name="Sprite" type="Sprite" parent="TabContainer/DK Isles"]
 position = Vector2( 836, 448 )
@@ -4977,21 +4967,18 @@ color = Color( 1, 1, 0, 0.490196 )
 polygon = PoolVector2Array( 85.5856, -132.719, 238.739, -320.087, 500, 109.298, 500, 445, -4.50452, 445, -4.50452, 156.14, 76.5766, 156.14, 121.622, -54.6491 )
 
 [node name="Forest Owl Tree" type="Node2D" parent="TabContainer/Fungi Forest/Sprite"]
-scale = Vector2( 1, 1 )
 
 [node name="Polygon2D" type="Polygon2D" parent="TabContainer/Fungi Forest/Sprite/Forest Owl Tree"]
 color = Color( 1, 1, 0, 0.490196 )
 polygon = PoolVector2Array( -193.694, 156.14, -193.694, 23.4211, -500, 23.4211, -500, 445, -4.50452, 445, -4.50452, 156.14 )
 
 [node name="Forest Mushroom Exterior" type="Node2D" parent="TabContainer/Fungi Forest/Sprite"]
-scale = Vector2( 1, 1 )
 
 [node name="Polygon2D" type="Polygon2D" parent="TabContainer/Fungi Forest/Sprite/Forest Mushroom Exterior"]
 color = Color( 1, 1, 0, 0.490196 )
 polygon = PoolVector2Array( -500, -109.298, -184.685, -109.298, -166.667, -140.526, -166.667, -288.859, -211.712, -351.316, -247.748, -390.351, -364.865, -437.193, -445.946, -429.386, -500, -382.544 )
 
 [node name="Forest Mushroom Interior" type="Node2D" parent="TabContainer/Fungi Forest/Sprite"]
-scale = Vector2( 1, 1 )
 
 [node name="Polygon2D" type="Polygon2D" parent="TabContainer/Fungi Forest/Sprite/Forest Mushroom Interior"]
 color = Color( 1, 1, 0, 0.490196 )
@@ -6700,6 +6687,7 @@ hint_tooltip = "Storage Room"
 shop = "Snide"
 
 [node name="Creepy Castle" type="Tabs" parent="TabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
